@@ -6,6 +6,7 @@ ProcessControlBlock::ProcessControlBlock(size_t pid, size_t memory)
     , m_ioReqTerm{0}
     , m_waitTerm{0}
     , m_memory{memory}
+    , m_priority{0}
     , m_ioEvent{IOEvent::Type::NONE, 0}
     , m_type{ProcessType::MIXED}
 {}
@@ -33,6 +34,11 @@ size_t ProcessControlBlock::waitTerm() const
 size_t ProcessControlBlock::memory() const
 {
     return m_memory;
+}
+
+size_t ProcessControlBlock::priority() const
+{
+    return m_priority;
 }
 
 IOEvent ProcessControlBlock::ioEvent() const
@@ -73,4 +79,9 @@ void ProcessControlBlock::clearWaitEvent()
 void ProcessControlBlock::setProcessType(ProcessType type)
 {
     m_type = type;
+}
+
+void ProcessControlBlock::setPriority(size_t priority)
+{
+    m_priority = priority;
 }

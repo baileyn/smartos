@@ -4,8 +4,8 @@
 #include <SmartOS.h>
 
 #include <QDialog>
-#include <QLineEdit>
 #include <QRadioButton>
+#include <QSpinBox>
 
 class SchedulingDialog : public QDialog
 {
@@ -16,14 +16,15 @@ public:
 
     SchedulerType schedulerType() const;
     size_t quantum() const;
-
-private:
-    void done(int r) override;
+    size_t priorityQueues() const;
 
 private:
     QRadioButton* m_defaultButton;
     QRadioButton* m_roundRobin;
-    QLineEdit* m_quantumEdit;
+    QSpinBox* m_quantumSpinBox;
+
+    QRadioButton* m_mlfq;
+    QSpinBox* m_priorityQueues;
 
     size_t m_quantum;
 };

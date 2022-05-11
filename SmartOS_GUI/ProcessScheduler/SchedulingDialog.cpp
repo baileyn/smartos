@@ -19,9 +19,19 @@ SchedulingDialog::SchedulingDialog()
     gridLayout->addWidget(m_defaultButton, 0, 0);
 
     m_roundRobin = new QRadioButton("Round Robin");
-    m_quantumEdit = new QLineEdit;
+    m_quantumSpinBox = new QSpinBox;
+    m_quantumSpinBox->setMaximum(10);
+    m_quantumSpinBox->setValue(5);
+    m_quantumSpinBox->setMinimum(1);
+
     gridLayout->addWidget(m_roundRobin, 1, 0);
-    gridLayout->addWidget(m_quantumEdit, 1, 1);
+    gridLayout->addWidget(m_quantumSpinBox, 1, 1);
+
+    m_mlfq = new QRadioButton("Multi-Level Feedback Queue");
+    m_priorityQueues = new QSpinBox;
+    m_priorityQueues->setMaximum(10);
+    m_priorityQueues->setValue(5);
+    m_priorityQueues->setMinimum(1);
 
     QPushButton* submitButton = new QPushButton("Submit");
     gridLayout->addWidget(submitButton, 2, 0, 1, 2);
@@ -40,30 +50,10 @@ SchedulerType SchedulingDialog::schedulerType() const
 
 size_t SchedulingDialog::quantum() const
 {
-    return m_quantum;
+    return m_quantumSpinBox->value();
 }
 
-void SchedulingDialog::done(int r)
+size_t SchedulingDialog::priorityQueues() const
 {
-    if (r == QDialog::Rejected) {
-        QDialog::done(r);
-        return;
-    }
-
-    // We only care about the time quantum if round robin is checked.
-    if (m_roundRobin->isChecked()) {
-        bool ok;
-
-        m_quantum = m_quantumEdit->text().toInt(&ok);
-
-        if (!ok) {
-            QMessageBox messageBox(
-                QMessageBox::Critical, "Error!",
-                "Please enter a valid integer for the quantum.");
-            messageBox.exec();
-            return;
-        }
-    }
-
-    QDialog::done(r);
+    return m_priorityQueues->value();
 }

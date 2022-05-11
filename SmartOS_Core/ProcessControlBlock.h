@@ -20,6 +20,7 @@ public:
     size_t ioReqTerm() const;
     size_t waitTerm() const;
     size_t memory() const;
+    size_t priority() const;
 
     IOEvent ioEvent() const;
     ProcessType processType() const;
@@ -31,6 +32,7 @@ public:
     void setWaitEvent(IOEvent event);
     void clearWaitEvent();
     void setProcessType(ProcessType type);
+    void setPriority(size_t priority);
 
 private:
     size_t m_pid;
@@ -38,6 +40,7 @@ private:
     size_t m_ioReqTerm;
     size_t m_waitTerm;
     size_t m_memory;
+    size_t m_priority;
 
     IOEvent m_ioEvent;
     ProcessType m_type;

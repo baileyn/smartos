@@ -42,6 +42,7 @@ void SmartOS::createProcessControlBlock(size_t pid, size_t memory, ProcessType t
     }
 
     pcb->setProcessType(type);
+    pcb->setPriority(m_maxPriority);
     m_readyQueue.push_back(std::move(pcb));
 }
 
@@ -427,6 +428,11 @@ void SmartOS::setScheduler(SchedulerType type)
 void SmartOS::setTimeQuantum(size_t quantum)
 {
     m_timeQuantum = quantum;
+}
+
+void SmartOS::setMaximumPriority(size_t priority)
+{
+    m_maxPriority = priority;
 }
 
 size_t SmartOS::maxMemory() const

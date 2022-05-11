@@ -105,6 +105,12 @@ public:
      */
     void setTimeQuantum(size_t quantum);
 
+    /**
+     * @brief setMaximumPriority sets the maximum priority level.
+     * @param priority the priority level
+     */
+    void setMaximumPriority(size_t priority);
+
 private:
     CentralProcessingUnit m_cpu;
     PCBQueue m_readyQueue;
@@ -118,6 +124,8 @@ private:
     size_t m_cycles;
 
     SchedulerType m_scheduler;
+
+    size_t m_maxPriority;
 
     size_t m_lastSwitch;
     size_t m_timeQuantum;
