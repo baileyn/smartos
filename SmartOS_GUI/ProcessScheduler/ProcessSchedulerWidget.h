@@ -4,6 +4,8 @@
 #include <QPaintEvent>
 #include <QWidget>
 
+#include <random>
+
 class MainWindow;
 
 class ProcessSchedulerWidget : public QWidget

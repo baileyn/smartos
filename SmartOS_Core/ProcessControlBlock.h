@@ -8,22 +8,22 @@
 class ProcessControlBlock
 {
 public:
-    explicit ProcessControlBlock(unsigned int pid, unsigned int memory);
+    explicit ProcessControlBlock(size_t pid, size_t memory);
 
-    unsigned int pid() const;
-    unsigned int cpuUsageTerm() const;
-    unsigned int ioReqTerm() const;
-    unsigned int waitTerm() const;
-    unsigned int memory() const;
+    size_t pid() const;
+    size_t cpuUsageTerm() const;
+    size_t ioReqTerm() const;
+    size_t waitTerm() const;
+    size_t memory() const;
 
     IOEvent ioEvent() const;
 
 private:
-    unsigned int m_pid;
-    unsigned int m_cpuUsageTerm;
-    unsigned int m_ioReqTerm;
-    unsigned int m_waitTerm;
-    unsigned int m_memory;
+    size_t m_pid;
+    size_t m_cpuUsageTerm;
+    size_t m_ioReqTerm;
+    size_t m_waitTerm;
+    size_t m_memory;
 
     IOEvent m_ioEvent;
 };

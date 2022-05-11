@@ -20,23 +20,23 @@ public:
         return "0.0.1";
     }
 
-    SmartOS(unsigned long memory);
+    SmartOS(size_t memory);
 
-    int nextSequentialPID();
+    size_t nextSequentialPID();
 
-    void createProcessControlBlock(unsigned int pid, unsigned int memory);
-    bool deleteProcessControlBlock(unsigned int pid);
-    bool blockProcessControlBlock(unsigned int pid, IOEvent ioEvent);
-    bool unblockProcessControlBlock(unsigned int pid);
+    void createProcessControlBlock(size_t pid, size_t memory);
+    bool deleteProcessControlBlock(size_t pid);
+    bool blockProcessControlBlock(size_t pid, IOEvent ioEvent);
+    bool unblockProcessControlBlock(size_t pid);
 
-    bool setActiveProcess(unsigned int pid);
+    bool setActiveProcess(size_t pid);
 
     CentralProcessingUnit& cpu();
 
     const PCBQueue& readyQueue();
     const PCBQueue& blockedQueue();
 
-    const ProcessControlBlockPtr& findProcessControlBlock(unsigned int pid);
+    const ProcessControlBlockPtr& findProcessControlBlock(size_t pid);
 
     const IOEventQueue& ioEventQueue();
 

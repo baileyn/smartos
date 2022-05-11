@@ -1,6 +1,6 @@
 #include "ProcessControlBlock.h"
 
-ProcessControlBlock::ProcessControlBlock(unsigned int pid, unsigned int memory)
+ProcessControlBlock::ProcessControlBlock(size_t pid, size_t memory)
     : m_pid{pid}
     , m_cpuUsageTerm{0}
     , m_ioReqTerm{0}
@@ -9,27 +9,27 @@ ProcessControlBlock::ProcessControlBlock(unsigned int pid, unsigned int memory)
     , m_ioEvent{IOEvent::Type::NONE, 0}
 {}
 
-unsigned int ProcessControlBlock::pid() const
+size_t ProcessControlBlock::pid() const
 {
     return m_pid;
 }
 
-unsigned int ProcessControlBlock::cpuUsageTerm() const
+size_t ProcessControlBlock::cpuUsageTerm() const
 {
     return m_cpuUsageTerm;
 }
 
-unsigned int ProcessControlBlock::ioReqTerm() const
+size_t ProcessControlBlock::ioReqTerm() const
 {
     return m_ioReqTerm;
 }
 
-unsigned int ProcessControlBlock::waitTerm() const
+size_t ProcessControlBlock::waitTerm() const
 {
     return m_waitTerm;
 }
 
-unsigned int ProcessControlBlock::memory() const
+size_t ProcessControlBlock::memory() const
 {
     return m_memory;
 }

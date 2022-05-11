@@ -1,10 +1,10 @@
 #include "SmartOS.h"
 
-SmartOS::SmartOS(unsigned long memory)
+SmartOS::SmartOS(size_t memory)
     : m_memory{memory}, m_lastPid{0}
 {}
 
-int SmartOS::nextSequentialPID()
+size_t SmartOS::nextSequentialPID()
 {
     for (;; m_lastPid++) {
         if (findProcessControlBlock(m_lastPid) == nullptr) {
@@ -15,14 +15,14 @@ int SmartOS::nextSequentialPID()
     return -1;
 }
 
-void SmartOS::createProcessControlBlock(unsigned int pid, unsigned int memory)
+void SmartOS::createProcessControlBlock(size_t pid, size_t memory)
 {
     // TODO: Check for already existing pid.
     auto pcb = std::make_unique<ProcessControlBlock>(pid, memory);
     m_readyQueue.push_back(std::move(pcb));
 }
 
-bool SmartOS::deleteProcessControlBlock(unsigned int pid)
+bool SmartOS::deleteProcessControlBlock(size_t pid)
 {
     if (m_cpu.currentProcess()->pid() == pid) {
         m_cpu.setActiveProcess(nullptr);
@@ -48,7 +48,7 @@ bool SmartOS::deleteProcessControlBlock(unsigned int pid)
     return false;
 }
 
-bool SmartOS::blockProcessControlBlock(unsigned int pid, IOEvent ioEvent)
+bool SmartOS::blockProcessControlBlock(size_t pid, IOEvent ioEvent)
 {
     Q_UNUSED(ioEvent);
 
@@ -81,7 +81,7 @@ bool SmartOS::blockProcessControlBlock(unsigned int pid, IOEvent ioEvent)
     return false;
 }
 
-bool SmartOS::unblockProcessControlBlock(unsigned int pid)
+bool SmartOS::unblockProcessControlBlock(size_t pid)
 {
     auto idx = std::find_if(
         std::begin(m_blockedQueue), std::end(m_blockedQueue),
@@ -102,7 +102,7 @@ bool SmartOS::unblockProcessControlBlock(unsigned int pid)
     return false;
 }
 
-bool SmartOS::setActiveProcess(unsigned int pid)
+bool SmartOS::setActiveProcess(size_t pid)
 {
     // We can only move a process to the CPU if it was currently in the
     // ready queue.
@@ -143,7 +143,7 @@ const PCBQueue& SmartOS::blockedQueue()
     return m_blockedQueue;
 }
 
-const ProcessControlBlockPtr& SmartOS::findProcessControlBlock(unsigned int pid)
+const ProcessControlBlockPtr& SmartOS::findProcessControlBlock(size_t pid)
 {
     if (cpu().currentProcess() != nullptr && cpu().currentProcess()->pid() == pid) {
         return cpu().currentProcess();
