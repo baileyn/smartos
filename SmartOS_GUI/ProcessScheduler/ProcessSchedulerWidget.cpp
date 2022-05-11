@@ -162,6 +162,7 @@ void ProcessSchedulerWidget::addRandomProcessControlBlocks()
 
 void ProcessSchedulerWidget::execute()
 {
+    m_mainWindow->addHistory("Execute");
     m_playAction->setEnabled(false);
     m_stepAction->setEnabled(false);
     m_pauseAction->setEnabled(true);
@@ -175,6 +176,7 @@ void ProcessSchedulerWidget::execute()
 
 void ProcessSchedulerWidget::pause()
 {
+    m_mainWindow->addHistory("Pause");
     m_playAction->setEnabled(true);
     m_stepAction->setEnabled(true);
     m_pauseAction->setEnabled(false);
@@ -187,6 +189,7 @@ void ProcessSchedulerWidget::pause()
 
 void ProcessSchedulerWidget::stop()
 {
+    m_mainWindow->addHistory("Stop");
     m_playAction->setEnabled(true);
     m_stepAction->setEnabled(true);
     m_stopAction->setEnabled(false);

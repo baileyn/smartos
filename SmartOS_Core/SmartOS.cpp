@@ -16,6 +16,7 @@ SmartOS::SmartOS(size_t memory)
     , m_scheduler{SchedulerType::DEFAULT}
     , m_lastSwitch{0}
 {
+    m_output.open("output.txt");
     addOperatingSystemProcess();
 }
 
@@ -347,6 +348,8 @@ void SmartOS::execute()
         return;
     }
 
+    m_output << "Current Process: " << m_cpu.currentProcess()->pid() << std::endl;
+
     m_cycles++;
 
     std::uniform_int_distribution<size_t> processingGen(0, 10000);
@@ -359,10 +362,10 @@ void SmartOS::execute()
         size_t operation = eventGenerator(engine);
 
         if (operation == 4) {
-            std::cout << "User IO Event" << std::endl;
+            m_output << "Adding User IO Event @ " << m_cycles << std::endl;
             addEvent(IOEvent::Type::USER_IO);
         } else if (operation == 9) {
-            std::cout << "Hard Drive event" << std::endl;
+            m_output << "Adding Hard Drive event @ " << m_cycles << std::endl;
             addEvent(IOEvent::Type::HARD_DRIVE);
         }
     }
@@ -391,22 +394,33 @@ void SmartOS::execute()
 
         switch (operation) {
         case 0:
-            std::cout << "TERMINATE" << std::endl;
+            std::cout << "{PID " << m_cpu.currentProcess()->pid() << ", MEMORY "
+                      << m_cpu.currentProcess()->memory() << ", CPU "
+                      << m_cpu.currentProcess()->cpuUsageTerm() << ", IO "
+                      << m_cpu.currentProcess()->ioReqTerm() << "}" << std::endl;
+            m_output << "{PID " << m_cpu.currentProcess()->pid() << ", MEMORY "
+                     << m_cpu.currentProcess()->memory() << ", CPU "
+                     << m_cpu.currentProcess()->cpuUsageTerm() << ", IO "
+                     << m_cpu.currentProcess()->ioReqTerm() << "}" << std::endl;
             // Terminate process.
             m_cpu.setActiveProcess(nullptr);
             break;
         case 1:
             // Ready queue
+            m_output << "Moved " << m_cpu.currentProcess()->pid()
+                     << " back to the ready queue." << std::endl;
             moveActiveToReady();
             break;
         case 2:
             // Block for User IO
+            m_output << "Moved " << m_cpu.currentProcess()->pid()
+                     << " to blocked queue waiting for user IO" << std::endl;
             moveActiveToBlocked(IOEvent::Type::USER_IO);
-            std::cout << "Move to blocked awiting for user IO" << std::endl;
             break;
         case 3:
             // Block for Hard drive
-            std::cout << "Move to blocked waiting for hard drive." << std::endl;
+            m_output << "Moved " << m_cpu.currentProcess()->pid()
+                     << " to blocked queue waiting for hard drive." << std::endl;
             moveActiveToBlocked(IOEvent::Type::HARD_DRIVE);
             break;
         default:

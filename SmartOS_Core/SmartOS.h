@@ -9,6 +9,8 @@
 
 #include <list>
 
+#include <fstream>
+
 typedef std::list<ProcessControlBlockPtr> PCBQueue;
 typedef std::list<IOEvent> IOEventQueue;
 
@@ -129,6 +131,8 @@ private:
 
     size_t m_lastSwitch;
     size_t m_timeQuantum;
+
+    std::ofstream m_output;
 };
 
 #endif // SMARTOS_H

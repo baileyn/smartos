@@ -6,6 +6,8 @@
 #include "ProcessScheduler/SchedulingDialog.h"
 #include "WelcomeWidget.h"
 
+#include <QDesktopServices>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QListWidgetItem>
@@ -16,6 +18,8 @@
 #include <QVBoxLayout>
 
 #include <SmartOS.h>
+
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -59,6 +63,9 @@ void MainWindow::setupMenuBar()
     connect(exitAction, &QAction::triggered, this, &MainWindow::exit);
 
     QMenu* helpMenu = menuBar()->addMenu(tr("&Help"));
+    QAction* userDocAction = helpMenu->addAction(tr("&User Documentation"));
+    connect(userDocAction, &QAction::triggered, this, &MainWindow::showUserDocumentation);
+    helpMenu->addSeparator();
     QAction* aboutAction = helpMenu->addAction(tr("&About"));
     connect(aboutAction, &QAction::triggered, this, &MainWindow::showAbout);
 }
@@ -120,4 +127,10 @@ void MainWindow::showProcessScheduler()
     g_SmartOS->setMaximumPriority(scheduleDialog.priorityQueues());
 
     stackedWidget->setCurrentWidget(processSchedulerWidget);
+}
+
+void MainWindow::showUserDocumentation()
+{
+    QFileInfo info{"./USERDOCS.pdf"};
+    QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
 }

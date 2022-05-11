@@ -48,6 +48,11 @@ public slots:
      */
     void showProcessScheduler();
 
+    /**
+     * @brief showUserDocumentation shows the user documentation PDF.
+     */
+    void showUserDocumentation();
+
 private:
     /**
      * @brief setupUi sets up the user interface.
