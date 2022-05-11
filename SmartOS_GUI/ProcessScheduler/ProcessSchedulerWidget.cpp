@@ -1,12 +1,15 @@
 #include "ProcessSchedulerWidget.h"
 
+#include "PCBDelegate.h"
 #include "ProcessCreationDialog.h"
 
 #include <QBoxLayout>
 #include <QIcon>
 #include <QInputDialog>
+#include <QListView>
 #include <QPushButton>
 #include <QSlider>
+#include <QStringListModel>
 #include <QToolBar>
 #include <QVBoxLayout>
 
@@ -56,6 +59,11 @@ ProcessSchedulerWidget::ProcessSchedulerWidget(QWidget* parent)
     vbox->addWidget(new QPushButton("Plz Push"));
 
     setLayout(vbox);
+}
+
+void ProcessSchedulerWidget::paintEvent(QPaintEvent* paintEvent)
+{
+    QWidget::paintEvent(paintEvent);
 }
 
 void ProcessSchedulerWidget::addProcessControlBlock()

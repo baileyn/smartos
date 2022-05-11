@@ -30,7 +30,8 @@ SOURCES += \
     HelpDialog.cpp \
     WelcomeWidget.cpp \
     ProcessScheduler/ProcessSchedulerWidget.cpp \
-    ProcessScheduler/ProcessCreationDialog.cpp
+    ProcessScheduler/ProcessCreationDialog.cpp \
+    ProcessScheduler/PCBDelegate.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -39,7 +40,8 @@ HEADERS += \
     WelcomeWidget.h \
     ProcessScheduler/ProcessSchedulerWidget.h \
     ProcessScheduler/ProcessCreationDialog.h \
-    Globals.h
+    Globals.h \
+    ProcessScheduler/PCBDelegate.h
 
 RESOURCES += \
     smartos.qrc
