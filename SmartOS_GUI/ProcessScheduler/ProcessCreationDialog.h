@@ -9,15 +9,20 @@ class ProcessCreationDialog : public QDialog
     Q_OBJECT
 public:
     ProcessCreationDialog();
-
-public slots:
-    void submit();
+    size_t pid() const;
+    size_t memoryRequired() const;
 
 private:
     void setupUi();
 
+    void done(int r) override;
+
 private:
-    QLineEdit* m_memoryRequired;
+    QLineEdit* m_pidLine;
+    QLineEdit* m_memoryRequiredLine;
+
+    size_t m_pid;
+    size_t m_memoryRequired;
 };
 
 #endif // PROCESSCREATIONDIALOG_H

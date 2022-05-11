@@ -38,7 +38,8 @@ HEADERS += \
     HelpDialog.h \
     WelcomeWidget.h \
     ProcessScheduler/ProcessSchedulerWidget.h \
-    ProcessScheduler/ProcessCreationDialog.h
+    ProcessScheduler/ProcessCreationDialog.h \
+    Globals.h
 
 RESOURCES += \
     smartos.qrc

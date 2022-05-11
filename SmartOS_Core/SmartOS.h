@@ -21,6 +21,9 @@ public:
     }
 
     SmartOS(unsigned long memory);
+
+    int nextSequentialPID();
+
     void createProcessControlBlock(unsigned int pid, unsigned int memory);
     bool deleteProcessControlBlock(unsigned int pid);
     bool blockProcessControlBlock(unsigned int pid, IOEvent ioEvent);
@@ -32,6 +35,9 @@ public:
 
     const PCBQueue& readyQueue();
     const PCBQueue& blockedQueue();
+
+    const ProcessControlBlockPtr& findProcessControlBlock(unsigned int pid);
+
     const IOEventQueue& ioEventQueue();
 
 private:
@@ -39,8 +45,11 @@ private:
     PCBQueue m_readyQueue;
     PCBQueue m_blockedQueue;
     IOEventQueue m_ioEventQueue;
+    ProcessControlBlockPtr m_nullProcessControlBlock;
 
     unsigned long m_memory;
+
+    size_t m_lastPid;
 };
 
 #endif // SMARTOS_H

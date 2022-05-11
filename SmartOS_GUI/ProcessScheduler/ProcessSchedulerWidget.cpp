@@ -10,6 +10,14 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 
+#include <memory>
+
+#include <SmartOS.h>
+
+#include <QDebug>
+
+extern std::unique_ptr<SmartOS> g_SmartOS;
+
 ProcessSchedulerWidget::ProcessSchedulerWidget(QWidget* parent)
     : QWidget(parent)
 {
@@ -54,12 +62,27 @@ void ProcessSchedulerWidget::addProcessControlBlock()
 {
     ProcessCreationDialog processCreationDialog;
 
-    processCreationDialog.exec();
+    if (processCreationDialog.exec() == QDialog::Accepted) {
+        g_SmartOS->createProcessControlBlock(
+            processCreationDialog.pid(), processCreationDialog.memoryRequired());
+    }
 }
 
 void ProcessSchedulerWidget::addRandomProcessControlBlocks()
 {
     QInputDialog inputDialog;
+    inputDialog.setOkButtonText("Create All");
 
-    inputDialog.exec();
+    if (inputDialog.exec() == QInputDialog::Accepted) {
+        QString text = inputDialog.textValue();
+
+        bool parsed;
+        int num = text.toInt(&parsed);
+
+        if (parsed) {
+            for (int i = 0; i < num; i++) {
+                g_SmartOS->createProcessControlBlock(0, 1);
+            }
+        }
+    }
 }

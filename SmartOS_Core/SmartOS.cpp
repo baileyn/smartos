@@ -4,6 +4,17 @@ SmartOS::SmartOS(unsigned long memory)
     : m_memory{memory}
 {}
 
+int SmartOS::nextSequentialPID()
+{
+    for (;; m_lastPid++) {
+        if (findProcessControlBlock(m_lastPid) == nullptr) {
+            return m_lastPid;
+        }
+    }
+
+    return -1;
+}
+
 void SmartOS::createProcessControlBlock(unsigned int pid, unsigned int memory)
 {
     // TODO: Check for already existing pid.
@@ -39,6 +50,8 @@ bool SmartOS::deleteProcessControlBlock(unsigned int pid)
 
 bool SmartOS::blockProcessControlBlock(unsigned int pid, IOEvent ioEvent)
 {
+    Q_UNUSED(ioEvent);
+
     if (m_cpu.currentProcess()->pid() == pid) {
         // Remove the process from the CPU
         auto oldActive = m_cpu.setActiveProcess(nullptr);
@@ -128,4 +141,31 @@ const PCBQueue& SmartOS::readyQueue()
 const PCBQueue& SmartOS::blockedQueue()
 {
     return m_blockedQueue;
+}
+
+const ProcessControlBlockPtr& SmartOS::findProcessControlBlock(unsigned int pid)
+{
+    if (cpu().currentProcess() != nullptr && cpu().currentProcess()->pid() == pid) {
+        return cpu().currentProcess();
+    } else {
+        auto idx = std::find_if(std::begin(readyQueue()), std::end(readyQueue()),
+                                [pid](const ProcessControlBlockPtr& pcb) {
+                                    return pcb->pid() == pid;
+                                });
+
+        if (idx != std::end(readyQueue())) {
+            return *idx;
+        }
+
+        idx = std::find_if(std::begin(blockedQueue()), std::end(blockedQueue()),
+                           [pid](const ProcessControlBlockPtr& pcb) {
+                               return pcb->pid() == pid;
+                           });
+
+        if (idx != std::end(blockedQueue())) {
+            return *idx;
+        }
+    }
+
+    return m_nullProcessControlBlock;
 }
