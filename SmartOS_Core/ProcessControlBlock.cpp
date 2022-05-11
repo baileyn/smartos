@@ -1,10 +1,13 @@
 #include "ProcessControlBlock.h"
 
 ProcessControlBlock::ProcessControlBlock(unsigned int pid, unsigned int memory)
-    : m_pid{pid}, m_cpuUsageTerm{0}, m_ioReqTerm{0}, m_waitTerm{0}, m_memory{memory}, m_ioEvent{IOEvent::Type::NONE, 0}
-{
-
-}
+    : m_pid{pid}
+    , m_cpuUsageTerm{0}
+    , m_ioReqTerm{0}
+    , m_waitTerm{0}
+    , m_memory{memory}
+    , m_ioEvent{IOEvent::Type::NONE, 0}
+{}
 
 unsigned int ProcessControlBlock::pid() const
 {

@@ -2,9 +2,7 @@
 
 SmartOS::SmartOS(unsigned long memory)
     : m_memory{memory}
-{
-
-}
+{}
 
 void SmartOS::createProcessControlBlock(unsigned int pid, unsigned int memory)
 {
@@ -15,19 +13,23 @@ void SmartOS::createProcessControlBlock(unsigned int pid, unsigned int memory)
 
 bool SmartOS::deleteProcessControlBlock(unsigned int pid)
 {
-    if(m_cpu.currentProcess()->pid() == pid) {
+    if (m_cpu.currentProcess()->pid() == pid) {
         m_cpu.setActiveProcess(nullptr);
         return true;
     }
 
-    auto idx = std::find_if(std::begin(m_readyQueue), std::end(m_readyQueue), [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid;});
-    if(idx != m_readyQueue.end()) {
+    auto idx = std::find_if(
+        std::begin(m_readyQueue), std::end(m_readyQueue),
+        [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid; });
+    if (idx != m_readyQueue.end()) {
         m_readyQueue.erase(idx);
         return true;
     }
 
-    idx = std::find_if(std::begin(m_blockedQueue), std::end(m_blockedQueue), [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid;});
-    if(idx != m_blockedQueue.end()) {
+    idx = std::find_if(
+        std::begin(m_blockedQueue), std::end(m_blockedQueue),
+        [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid; });
+    if (idx != m_blockedQueue.end()) {
         m_blockedQueue.erase(idx);
         return true;
     }
@@ -37,7 +39,7 @@ bool SmartOS::deleteProcessControlBlock(unsigned int pid)
 
 bool SmartOS::blockProcessControlBlock(unsigned int pid, IOEvent ioEvent)
 {
-    if(m_cpu.currentProcess()->pid() == pid) {
+    if (m_cpu.currentProcess()->pid() == pid) {
         // Remove the process from the CPU
         auto oldActive = m_cpu.setActiveProcess(nullptr);
 
@@ -47,8 +49,10 @@ bool SmartOS::blockProcessControlBlock(unsigned int pid, IOEvent ioEvent)
         return true;
     }
 
-    auto idx = std::find_if(std::begin(m_readyQueue), std::end(m_readyQueue), [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid;});
-    if(idx != m_readyQueue.end()) {
+    auto idx = std::find_if(
+        std::begin(m_readyQueue), std::end(m_readyQueue),
+        [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid; });
+    if (idx != m_readyQueue.end()) {
         // Grab the pointer from the list.
         auto pcb = std::move(*idx);
 
@@ -69,9 +73,11 @@ bool SmartOS::setActiveProcess(unsigned int pid)
     // We can only move a process to the CPU if it was currently in the
     // ready queue.
 
-    auto idx = std::find_if(std::begin(m_readyQueue), std::end(m_readyQueue), [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid;});
+    auto idx = std::find_if(
+        std::begin(m_readyQueue), std::end(m_readyQueue),
+        [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid; });
 
-    if(idx != m_readyQueue.end()) {
+    if (idx != m_readyQueue.end()) {
         // Grab the pointer from the list.
         auto pcb = std::move(*idx);
 

@@ -15,7 +15,8 @@ typedef std::list<IOEventPtr> IOEventQueue;
 class SMARTOS_CORESHARED_EXPORT SmartOS
 {
 public:
-    static inline std::string getVersionNumber() {
+    static inline std::string getVersionNumber()
+    {
         return "0.0.1";
     }
 

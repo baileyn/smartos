@@ -7,7 +7,7 @@ class ProcessSchedulerWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ProcessSchedulerWidget(QWidget *parent = nullptr);
+    explicit ProcessSchedulerWidget(QWidget* parent = nullptr);
 
 signals:
 

@@ -3,7 +3,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-ProcessSchedulerWidget::ProcessSchedulerWidget(QWidget *parent) : QWidget(parent)
+ProcessSchedulerWidget::ProcessSchedulerWidget(QWidget* parent)
+    : QWidget(parent)
 {
     QVBoxLayout* vbox = new QVBoxLayout;
     setLayout(vbox);

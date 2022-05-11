@@ -1,8 +1,7 @@
 #include "CentralProcessingUnit.h"
 
 CentralProcessingUnit::CentralProcessingUnit()
-{
-}
+{}
 
 ProcessControlBlockPtr CentralProcessingUnit::setActiveProcess(ProcessControlBlockPtr pcb)
 {

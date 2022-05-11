@@ -1,10 +1,9 @@
 #include "IOEvent.h"
 
 IOEvent::IOEvent(Type type, unsigned long cycleStamp)
-    : m_type{type}, m_cycleStamp{cycleStamp}
-{
-
-}
+    : m_type{type}
+    , m_cycleStamp{cycleStamp}
+{}
 
 IOEvent::Type IOEvent::type() const
 {

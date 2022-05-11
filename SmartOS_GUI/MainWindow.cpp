@@ -7,16 +7,19 @@
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QListWidgetItem>
-#include <QMenuBar>
 #include <QMenu>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
 
 #include <SmartOS.h>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), stackedWidget(new QStackedWidget), welcomeWidget(nullptr), processSchedulerWidget(nullptr)
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent)
+    , stackedWidget(new QStackedWidget)
+    , welcomeWidget(nullptr)
+    , processSchedulerWidget(nullptr)
 {
     setWindowIcon(QIcon(":/resources/smartos.png"));
     setWindowTitle(tr("SmartOS Simulator"));
@@ -26,8 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 MainWindow::~MainWindow()
-{
-}
+{}
 
 void MainWindow::setupUi()
 {
@@ -63,15 +65,13 @@ void MainWindow::showAbout()
 {
     historyList.push_front(tr("Show About"));
 
-    QMessageBox aboutBox(
-                QMessageBox::NoIcon,
-                tr("About Menu"),
-                                   tr("<center><b>SmartOS v%1</b></center><br>"
-                                      "Operating Systems Concepts Simulator<br>"
-                                      "Available under <b>GPLv3 Licence</b><br>"
-                                      "<center>Nicholas Bailey</center>").arg(QString::fromStdString(SmartOS::getVersionNumber())),
-                QMessageBox::Ok
-                );
+    QMessageBox aboutBox(QMessageBox::NoIcon, tr("About Menu"),
+                         tr("<center><b>SmartOS v%1</b></center><br>"
+                            "Operating Systems Concepts Simulator<br>"
+                            "Available under <b>GPLv3 Licence</b><br>"
+                            "<center>Nicholas Bailey</center>")
+                             .arg(QString::fromStdString(SmartOS::getVersionNumber())),
+                         QMessageBox::Ok);
 
     aboutBox.setWindowIcon(QIcon(":/resources/about.png"));
     aboutBox.exec();
@@ -85,7 +85,7 @@ void MainWindow::showHistory()
 
 void MainWindow::showWelcome()
 {
-    if(welcomeWidget == nullptr) {
+    if (welcomeWidget == nullptr) {
         welcomeWidget = new WelcomeWidget(this);
         stackedWidget->addWidget(welcomeWidget);
     } else {
@@ -100,7 +100,7 @@ void MainWindow::showProcessScheduler()
 {
     historyList.push_front("Show CPU Simulator");
 
-    if(processSchedulerWidget == nullptr) {
+    if (processSchedulerWidget == nullptr) {
         processSchedulerWidget = new ProcessSchedulerWidget;
         stackedWidget->addWidget(processSchedulerWidget);
     }

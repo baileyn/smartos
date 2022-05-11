@@ -9,7 +9,7 @@ class WelcomeWidget : public QWidget
 {
     Q_OBJECT
 public:
-    WelcomeWidget(MainWindow* mainWindow, QWidget *parent = nullptr);
+    WelcomeWidget(MainWindow* mainWindow, QWidget* parent = nullptr);
 };
 
 #endif // WELCOMEWIDGET_H
