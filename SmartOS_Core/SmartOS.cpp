@@ -68,6 +68,27 @@ bool SmartOS::blockProcessControlBlock(unsigned int pid, IOEvent ioEvent)
     return false;
 }
 
+bool SmartOS::unblockProcessControlBlock(unsigned int pid)
+{
+    auto idx = std::find_if(
+        std::begin(m_blockedQueue), std::end(m_blockedQueue),
+        [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid; });
+    if (idx != m_blockedQueue.end()) {
+        // Grab the pointer from the list.
+        auto pcb = std::move(*idx);
+
+        // Remove the now invalidated unique_ptr.
+        m_blockedQueue.erase(idx);
+
+        // Add the proces to the Ready Queue
+        m_readyQueue.push_back(std::move(pcb));
+
+        return true;
+    }
+
+    return false;
+}
+
 bool SmartOS::setActiveProcess(unsigned int pid)
 {
     // We can only move a process to the CPU if it was currently in the

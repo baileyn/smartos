@@ -24,6 +24,7 @@ public:
     void createProcessControlBlock(unsigned int pid, unsigned int memory);
     bool deleteProcessControlBlock(unsigned int pid);
     bool blockProcessControlBlock(unsigned int pid, IOEvent ioEvent);
+    bool unblockProcessControlBlock(unsigned int pid);
 
     bool setActiveProcess(unsigned int pid);
 
