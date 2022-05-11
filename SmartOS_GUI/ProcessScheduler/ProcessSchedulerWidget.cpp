@@ -1,5 +1,7 @@
 #include "ProcessSchedulerWidget.h"
 
+#include "ProcessCreationDialog.h"
+
 #include <QBoxLayout>
 #include <QIcon>
 #include <QPushButton>

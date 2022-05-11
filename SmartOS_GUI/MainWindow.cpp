@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 
 #include "HistoryDialog.h"
-#include "ProcessSchedulerWidget.h"
+#include "ProcessScheduler/ProcessSchedulerWidget.h"
 #include "WelcomeWidget.h"
 
 #include <QHBoxLayout>

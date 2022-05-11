@@ -28,15 +28,17 @@ SOURCES += \
         MainWindow.cpp \
     HistoryDialog.cpp \
     HelpDialog.cpp \
-    ProcessSchedulerWidget.cpp \
-    WelcomeWidget.cpp
+    WelcomeWidget.cpp \
+    ProcessScheduler/ProcessSchedulerWidget.cpp \
+    ProcessScheduler/ProcessCreationDialog.cpp
 
 HEADERS += \
         MainWindow.h \
     HistoryDialog.h \
     HelpDialog.h \
-    ProcessSchedulerWidget.h \
-    WelcomeWidget.h
+    WelcomeWidget.h \
+    ProcessScheduler/ProcessSchedulerWidget.h \
+    ProcessScheduler/ProcessCreationDialog.h
 
 RESOURCES += \
     smartos.qrc
