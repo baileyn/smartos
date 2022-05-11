@@ -31,6 +31,11 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow()
 {}
 
+void MainWindow::addHistory(const QString &info)
+{
+    historyList.push_front(info);
+}
+
 void MainWindow::setupUi()
 {
     setupMenuBar();
@@ -90,7 +95,7 @@ void MainWindow::showWelcome()
         stackedWidget->addWidget(welcomeWidget);
     } else {
         // The first time showing the Welcome view isn't technically a user command.
-        historyList.push_front("Show Welcome View");
+        addHistory("Show Welcome View");
     }
 
     stackedWidget->setCurrentWidget(welcomeWidget);
@@ -98,10 +103,10 @@ void MainWindow::showWelcome()
 
 void MainWindow::showProcessScheduler()
 {
-    historyList.push_front("Show CPU Simulator");
+    addHistory("Show CPU Simulator");
 
     if (processSchedulerWidget == nullptr) {
-        processSchedulerWidget = new ProcessSchedulerWidget;
+        processSchedulerWidget = new ProcessSchedulerWidget{this};
         stackedWidget->addWidget(processSchedulerWidget);
     }
 

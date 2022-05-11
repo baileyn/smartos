@@ -3,6 +3,8 @@
 #include "PCBDelegate.h"
 #include "ProcessCreationDialog.h"
 
+#include "MainWindow.h"
+
 #include <QBoxLayout>
 #include <QIcon>
 #include <QInputDialog>
@@ -21,8 +23,8 @@
 
 extern std::unique_ptr<SmartOS> g_SmartOS;
 
-ProcessSchedulerWidget::ProcessSchedulerWidget(QWidget* parent)
-    : QWidget(parent)
+ProcessSchedulerWidget::ProcessSchedulerWidget(MainWindow* parent)
+    : QWidget(parent), m_mainWindow{parent}
 {
     QToolBar* toolbar = new QToolBar;
 
@@ -46,13 +48,13 @@ ProcessSchedulerWidget::ProcessSchedulerWidget(QWidget* parent)
     toolbar->addAction(QIcon(":/resources/pause.png"), "");
     toolbar->addAction(QIcon(":/resources/stop.png"), "");
 
-    QWidget* spacer2 = new QWidget;
-    spacer2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    toolbar->addWidget(spacer2);
-
     QSlider* slider = new QSlider;
     slider->setOrientation(Qt::Horizontal);
     toolbar->addWidget(slider);
+
+    QWidget* spacer2 = new QWidget;
+    spacer2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    toolbar->addWidget(spacer2);
 
     QVBoxLayout* vbox = new QVBoxLayout;
     vbox->setMenuBar(toolbar);
@@ -71,6 +73,7 @@ void ProcessSchedulerWidget::addProcessControlBlock()
     ProcessCreationDialog processCreationDialog;
 
     if (processCreationDialog.exec() == QDialog::Accepted) {
+        m_mainWindow->addHistory(QString("Add new Process Control Block with PID %1").arg(processCreationDialog.pid()));
         g_SmartOS->createProcessControlBlock(
             processCreationDialog.pid(), processCreationDialog.memoryRequired());
     }
@@ -79,6 +82,7 @@ void ProcessSchedulerWidget::addProcessControlBlock()
 void ProcessSchedulerWidget::addRandomProcessControlBlocks()
 {
     QInputDialog inputDialog;
+    inputDialog.setLabelText("How many random Process Control Blocks would you like to generate?");
     inputDialog.setOkButtonText("Create All");
 
     if (inputDialog.exec() == QInputDialog::Accepted) {
@@ -88,6 +92,8 @@ void ProcessSchedulerWidget::addRandomProcessControlBlocks()
         int num = text.toInt(&parsed);
 
         if (parsed) {
+            m_mainWindow->addHistory(QString("Add %1 random process control blocks.").arg(num));
+
             for (int i = 0; i < num; i++) {
                 g_SmartOS->createProcessControlBlock(0, 1);
             }

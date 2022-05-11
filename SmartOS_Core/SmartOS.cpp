@@ -169,3 +169,8 @@ const ProcessControlBlockPtr& SmartOS::findProcessControlBlock(unsigned int pid)
 
     return m_nullProcessControlBlock;
 }
+
+size_t SmartOS::memory() const
+{
+    return m_memory;
+}

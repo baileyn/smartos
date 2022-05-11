@@ -15,6 +15,12 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
+    /**
+     * @brief addHistory add the following information to the history
+     * @param info the info to add to the history
+     */
+    void addHistory(const QString& info);
+
 private slots:
     /**
      * @brief exit closes the application

@@ -40,6 +40,8 @@ public:
 
     const IOEventQueue& ioEventQueue();
 
+    size_t memory() const;
+
 private:
     CentralProcessingUnit m_cpu;
     PCBQueue m_readyQueue;
@@ -47,8 +49,7 @@ private:
     IOEventQueue m_ioEventQueue;
     ProcessControlBlockPtr m_nullProcessControlBlock;
 
-    unsigned long m_memory;
-
+    size_t m_memory;
     size_t m_lastPid;
 };
 
