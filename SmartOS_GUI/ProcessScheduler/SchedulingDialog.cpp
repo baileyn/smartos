@@ -33,8 +33,11 @@ SchedulingDialog::SchedulingDialog()
     m_priorityQueues->setValue(5);
     m_priorityQueues->setMinimum(1);
 
+    gridLayout->addWidget(m_mlfq, 2, 0);
+    gridLayout->addWidget(m_priorityQueues, 2, 1);
+
     QPushButton* submitButton = new QPushButton("Submit");
-    gridLayout->addWidget(submitButton, 2, 0, 1, 2);
+    gridLayout->addWidget(submitButton, 3, 0, 1, 2);
     connect(submitButton, &QPushButton::clicked, this, &QDialog::accept);
 
     setLayout(gridLayout);
@@ -44,7 +47,10 @@ SchedulerType SchedulingDialog::schedulerType() const
 {
     if (m_roundRobin->isChecked()) {
         return SchedulerType::ROUND_ROBIN;
+    } else if (m_mlfq->isChecked()) {
+        return SchedulerType::MLFQ;
     }
+
     return SchedulerType::DEFAULT;
 }
 

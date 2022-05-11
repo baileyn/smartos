@@ -117,5 +117,7 @@ void MainWindow::showProcessScheduler()
 
     g_SmartOS->setScheduler(scheduleDialog.schedulerType());
     g_SmartOS->setTimeQuantum(scheduleDialog.quantum());
+    g_SmartOS->setMaximumPriority(scheduleDialog.priorityQueues());
+
     stackedWidget->setCurrentWidget(processSchedulerWidget);
 }

@@ -243,15 +243,14 @@ size_t SmartOS::usedMemory()
 
 void SmartOS::updateCurrentProcessControlBlock()
 {
+    if (m_readyQueue.empty()) {
+        return;
+    }
+
     ProcessControlBlockPtr current = nullptr;
 
     switch (m_scheduler) {
     case SchedulerType::DEFAULT: {
-        if (m_readyQueue.empty()) {
-            // Keep the current process in the cpu.
-            return;
-        }
-
         current = std::move(m_readyQueue.front());
         m_readyQueue.erase(m_readyQueue.begin());
         break;
@@ -262,18 +261,47 @@ void SmartOS::updateCurrentProcessControlBlock()
             return;
         }
 
-        if (m_readyQueue.empty()) {
-            return;
-        }
-
-        auto ptr = std::move(m_readyQueue.front());
+        current = std::move(m_readyQueue.front());
         m_readyQueue.erase(m_readyQueue.begin());
-
-        current = std::move(ptr);
 
         m_lastSwitch = m_cycles;
         break;
     }
+
+    case SchedulerType::MLFQ: {
+        if (m_cycles - m_lastSwitch > m_timeQuantum) {
+            for (auto& pcb : m_readyQueue) {
+                pcb->setPriority(m_maxPriority);
+            }
+
+            m_lastSwitch = m_cycles;
+        }
+
+        auto i = m_readyQueue.begin();
+
+        int highestPriority = 0;
+        PCBQueue::iterator highest = m_readyQueue.end();
+
+        while (i != m_readyQueue.end()) {
+            if (highestPriority < (*i)->priority()) {
+                highest = i;
+                highestPriority = (*i)->priority();
+            }
+
+            i++;
+        }
+
+        if (highest == m_readyQueue.end()) {
+            current = std::move(m_readyQueue.front());
+            m_readyQueue.erase(m_readyQueue.begin());
+        } else {
+            current = std::move(*highest);
+            m_readyQueue.erase(highest);
+        }
+
+        break;
+    }
+
     default:
         std::cout << "Can't handle scheduler." << std::endl;
     }
