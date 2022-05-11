@@ -10,5 +10,6 @@
         <file>resources/play.png</file>
         <file>resources/step.png</file>
         <file>resources/stop.png</file>
+        <file>resources/addRandom.png</file>
     </qresource>
 </RCC>

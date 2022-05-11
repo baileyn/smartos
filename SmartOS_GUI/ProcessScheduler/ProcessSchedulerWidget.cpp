@@ -4,6 +4,7 @@
 
 #include <QBoxLayout>
 #include <QIcon>
+#include <QInputDialog>
 #include <QPushButton>
 #include <QSlider>
 #include <QToolBar>
@@ -17,7 +18,14 @@ ProcessSchedulerWidget::ProcessSchedulerWidget(QWidget* parent)
     toolbar->setIconSize(QSize{24, 24});
     toolbar->setFixedHeight(32);
 
-    toolbar->addAction(QIcon(":/resources/add.png"), "");
+    QAction* addAction = toolbar->addAction(QIcon(":/resources/add.png"), "");
+    connect(addAction, &QAction::triggered, this, &ProcessSchedulerWidget::addProcessControlBlock);
+
+    QAction* addRandomAction =
+        toolbar->addAction(QIcon(":/resources/addRandom.png"), "");
+    connect(addRandomAction, &QAction::triggered, this,
+            &ProcessSchedulerWidget::addRandomProcessControlBlocks);
+
     QWidget* spacer = new QWidget;
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     toolbar->addWidget(spacer);
@@ -40,4 +48,18 @@ ProcessSchedulerWidget::ProcessSchedulerWidget(QWidget* parent)
     vbox->addWidget(new QPushButton("Plz Push"));
 
     setLayout(vbox);
+}
+
+void ProcessSchedulerWidget::addProcessControlBlock()
+{
+    ProcessCreationDialog processCreationDialog;
+
+    processCreationDialog.exec();
+}
+
+void ProcessSchedulerWidget::addRandomProcessControlBlocks()
+{
+    QInputDialog inputDialog;
+
+    inputDialog.exec();
 }

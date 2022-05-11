@@ -12,6 +12,8 @@ public:
 signals:
 
 public slots:
+    void addProcessControlBlock();
+    void addRandomProcessControlBlocks();
 };
 
 #endif // PROCESSSCHEDULERWIDGET_H
