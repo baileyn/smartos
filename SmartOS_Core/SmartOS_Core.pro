@@ -24,12 +24,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         SmartOS.cpp \
-    ProcessControlBlock.cpp
+    ProcessControlBlock.cpp \
+    CentralProcessingUnit.cpp \
+    IOEvent.cpp
 
 HEADERS += \
         SmartOS.h \
     Global.h \
-    ProcessControlBlock.h
+    ProcessControlBlock.h \
+    CentralProcessingUnit.h \
+    IOEvent.h
 
 unix {
     target.path = /usr/lib

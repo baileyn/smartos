@@ -1,7 +1,7 @@
 #include "ProcessControlBlock.h"
 
-ProcessControlBlock::ProcessControlBlock(const std::string& name, unsigned int pid, unsigned int memory)
-    : m_name{name}, m_pid{pid}, m_cpuUsageTerm{0}, m_ioReqTerm{0}, m_waitTerm{0}, m_memory{memory}
+ProcessControlBlock::ProcessControlBlock(unsigned int pid, unsigned int memory)
+    : m_pid{pid}, m_cpuUsageTerm{0}, m_ioReqTerm{0}, m_waitTerm{0}, m_memory{memory}
 {
 
 }

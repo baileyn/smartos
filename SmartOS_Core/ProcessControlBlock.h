@@ -2,12 +2,11 @@
 #define PROCESSCONTROLBLOCK_H
 
 #include <memory>
-#include <string>
 
 class ProcessControlBlock
 {
 public:
-    explicit ProcessControlBlock(const std::string& name, unsigned int pid, unsigned int memory);
+    explicit ProcessControlBlock(unsigned int pid, unsigned int memory);
 
     unsigned int pid() const;
     unsigned int cpuUsageTerm() const;
@@ -16,7 +15,6 @@ public:
     unsigned int memory() const;
 
 private:
-    std::string m_name;
     unsigned int m_pid;
     unsigned int m_cpuUsageTerm;
     unsigned int m_ioReqTerm;
