@@ -13,12 +13,11 @@ class CpuWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CpuWidget(CentralProcessingUnit& cpu, QWidget* parent = nullptr);
+    explicit CpuWidget(QWidget* parent = nullptr);
 
     void update();
 
 private:
-    CentralProcessingUnit& m_cpu;
     ProcessWidget* m_currentProcess;
 };
 

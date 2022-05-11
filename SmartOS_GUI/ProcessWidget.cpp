@@ -23,6 +23,8 @@ ProcessWidget::ProcessWidget(ProcessControlBlockPtr& pcb, QWidget* parent)
 
 void ProcessWidget::paintEvent(QPaintEvent* event)
 {
+    Q_UNUSED(event);
+
     QPainter painter{this};
     painter.drawRoundedRect(3, 3, width() - 5, height() - 5, 3, 3);
 }

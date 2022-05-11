@@ -33,3 +33,13 @@ size_t ProcessControlBlock::memory() const
 {
     return m_memory;
 }
+
+void ProcessControlBlock::updateCpuUsageTerm(size_t elapsed)
+{
+    m_cpuUsageTerm += elapsed;
+}
+
+void ProcessControlBlock::updateWaitTerm(size_t elapsed)
+{
+    m_waitTerm += elapsed;
+}

@@ -4,9 +4,12 @@
 
 #include "MainWindow.h"
 
+#include <QAction>
 #include <QBoxLayout>
+#include <QHBoxLayout>
 #include <QIcon>
 #include <QInputDialog>
+#include <QLabel>
 #include <QListView>
 #include <QPushButton>
 #include <QSlider>
@@ -33,6 +36,7 @@ extern std::unique_ptr<SmartOS> g_SmartOS;
 ProcessSchedulerWidget::ProcessSchedulerWidget(MainWindow* parent)
     : QWidget(parent)
     , m_mainWindow{parent}
+    , m_currentStep{0}
 {
     QToolBar* toolbar = new QToolBar;
 
@@ -51,24 +55,51 @@ ProcessSchedulerWidget::ProcessSchedulerWidget(MainWindow* parent)
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     toolbar->addWidget(spacer);
 
-    toolbar->addAction(QIcon(":/resources/play.png"), "");
-    toolbar->addAction(QIcon(":/resources/step.png"), "");
-    toolbar->addAction(QIcon(":/resources/pause.png"), "");
-    toolbar->addAction(QIcon(":/resources/stop.png"), "");
+    m_playAction = toolbar->addAction(QIcon(":/resources/play.png"), "");
+    connect(m_playAction, &QAction::triggered, this, &ProcessSchedulerWidget::execute);
 
-    QSlider* slider = new QSlider;
-    slider->setOrientation(Qt::Horizontal);
-    toolbar->addWidget(slider);
+    m_stepAction = toolbar->addAction(QIcon(":/resources/step.png"), "");
+    connect(m_stepAction, &QAction::triggered, this, &ProcessSchedulerWidget::executeStep);
+
+    m_pauseAction = toolbar->addAction(QIcon(":/resources/pause.png"), "");
+    connect(m_pauseAction, &QAction::triggered, this, &ProcessSchedulerWidget::pause);
+
+    m_stopAction = toolbar->addAction(QIcon(":/resources/stop.png"), "");
+    connect(m_stopAction, &QAction::triggered, this, &ProcessSchedulerWidget::stop);
+
+    m_pauseAction->setEnabled(false);
+    m_stopAction->setEnabled(false);
+
+    m_slider = new QSlider;
+    m_slider->setOrientation(Qt::Horizontal);
+
+    m_slider->setMaximum(5);
+    m_slider->setMinimum(1);
+
+    toolbar->addWidget(m_slider);
 
     QWidget* spacer2 = new QWidget;
     spacer2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     toolbar->addWidget(spacer2);
+
+    m_timerDisplay = new QLabel;
+    m_timerDisplay->setText(QString("Step: %1").arg(m_currentStep));
+    toolbar->addWidget(m_timerDisplay);
 
     QVBoxLayout* vbox = new QVBoxLayout;
     vbox->setMenuBar(toolbar);
 
     m_readyQueueWidget = new ReadyQueueWidget;
     vbox->addWidget(m_readyQueueWidget);
+
+    QHBoxLayout* hbox = new QHBoxLayout;
+
+    m_cpuWidget = new CpuWidget;
+    hbox->addWidget(m_cpuWidget);
+    vbox->addLayout(hbox);
+
+    m_executeTimer = new QTimer;
+    connect(m_executeTimer, &QTimer::timeout, this, &ProcessSchedulerWidget::executeStep);
 
     setLayout(vbox);
 }
@@ -123,4 +154,51 @@ void ProcessSchedulerWidget::addRandomProcessControlBlocks()
             m_readyQueueWidget->update();
         }
     }
+}
+
+void ProcessSchedulerWidget::execute()
+{
+    m_playAction->setEnabled(false);
+    m_stepAction->setEnabled(false);
+    m_pauseAction->setEnabled(true);
+    m_stopAction->setEnabled(true);
+    m_slider->setEnabled(false);
+
+    m_executeTimer->setInterval(1000 / m_slider->value());
+
+    m_executeTimer->start();
+}
+
+void ProcessSchedulerWidget::pause()
+{
+    m_playAction->setEnabled(true);
+    m_stepAction->setEnabled(true);
+    m_pauseAction->setEnabled(false);
+    m_stopAction->setEnabled(false);
+
+    m_slider->setEnabled(true);
+
+    m_executeTimer->stop();
+}
+
+void ProcessSchedulerWidget::stop()
+{
+    m_playAction->setEnabled(true);
+    m_stepAction->setEnabled(true);
+    m_stopAction->setEnabled(false);
+    m_pauseAction->setEnabled(false);
+
+    m_slider->setEnabled(true);
+
+    m_executeTimer->stop();
+
+    m_currentStep = 0;
+    m_timerDisplay->setText(QString("Step: %1").arg(m_currentStep));
+}
+
+void ProcessSchedulerWidget::executeStep()
+{
+    m_timerDisplay->setText(QString("Step: %1").arg(m_currentStep));
+
+    m_currentStep++;
 }

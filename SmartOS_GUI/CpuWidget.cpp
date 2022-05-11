@@ -1,17 +1,20 @@
 #include "CpuWidget.h"
 
+#include "Globals.h"
+
 #include <QLabel>
 #include <QPainter>
 #include <QVBoxLayout>
 
-CpuWidget::CpuWidget(CentralProcessingUnit& cpu, QWidget* parent)
+CpuWidget::CpuWidget(QWidget* parent)
     : QWidget(parent)
-    , m_cpu{cpu}
 {
     QVBoxLayout* vbox = new QVBoxLayout;
     QLabel* label = new QLabel("Current Process");
     vbox->addWidget(label);
     vbox->setAlignment(label, Qt::AlignCenter);
+
+    setLayout(vbox);
 }
 
 void CpuWidget::update()
@@ -21,6 +24,6 @@ void CpuWidget::update()
         delete m_currentProcess;
     }
 
-    m_currentProcess = new ProcessWidget(m_cpu.currentProcess());
+    m_currentProcess = new ProcessWidget(g_SmartOS->cpu().currentProcess());
     layout()->addWidget(m_currentProcess);
 }

@@ -1,9 +1,20 @@
 #include "SmartOS.h"
 
+#include <random>
+
+namespace
+{
+std::random_device r;
+std::mt19937 engine(r());
+} // namespace
+
 SmartOS::SmartOS(size_t memory)
     : m_maxMemory{memory}
     , m_lastPid{1}
-{}
+{
+    // Add OS process.
+    createProcessControlBlock(0, 100);
+}
 
 size_t SmartOS::nextSequentialPID()
 {
@@ -121,7 +132,10 @@ bool SmartOS::setActiveProcess(size_t pid)
 
         // Set the new active process.
         auto oldActive = std::move(m_cpu.setActiveProcess(std::move(pcb)));
-        m_readyQueue.push_back(std::move(oldActive));
+
+        if (oldActive != nullptr) {
+            m_readyQueue.push_back(std::move(oldActive));
+        }
 
         return true;
     }
@@ -192,6 +206,41 @@ size_t SmartOS::usedMemory()
     }
 
     return memoryUsed;
+}
+
+void SmartOS::execute()
+{
+    // Determine if we have anything to actually do.
+    if (m_blockedQueue.size() == 0 && m_readyQueue.size() == 1 &&
+        m_cpu.currentProcess() == nullptr) {
+        return;
+    }
+
+    std::uniform_int_distribution<size_t> processTimeGen(0, 10000);
+
+    ProcessControlBlockPtr current = determineNextProcess();
+    ProcessControlBlockPtr oldActive = m_cpu.setActiveProcess(std::move(current));
+
+    // Move the old process into the ready queue.
+    if (oldActive != nullptr) {
+        m_readyQueue.push_back(std::move(oldActive));
+    }
+
+    size_t processingTime = processTimeGen(engine);
+
+    m_cpu.currentProcess()->updateCpuUsageTerm(processingTime);
+
+    for (auto& pcb : m_readyQueue) {
+        pcb->updateWaitTerm(processingTime);
+    }
+}
+
+ProcessControlBlockPtr SmartOS::determineNextProcess()
+{
+    auto ptr = std::move(m_readyQueue.front());
+    m_readyQueue.erase(m_readyQueue.begin());
+
+    return std::move(ptr);
 }
 
 size_t SmartOS::maxMemory() const

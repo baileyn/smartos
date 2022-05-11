@@ -52,6 +52,17 @@ public:
      */
     size_t usedMemory();
 
+    /**
+     * @brief execute execute a single step in the operating system.
+     */
+    void execute();
+
+    /**
+     * @brief determineNextProcess determines the next process in the ready queue to run.
+     * @return the next process in the ready queue to run.
+     */
+    ProcessControlBlockPtr determineNextProcess();
+
 private:
     CentralProcessingUnit m_cpu;
     PCBQueue m_readyQueue;

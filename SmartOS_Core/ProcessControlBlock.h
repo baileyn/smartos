@@ -18,6 +18,9 @@ public:
 
     IOEvent ioEvent() const;
 
+    void updateCpuUsageTerm(size_t elapsed);
+    void updateWaitTerm(size_t elapsed);
+
 private:
     size_t m_pid;
     size_t m_cpuUsageTerm;
