@@ -69,9 +69,10 @@ void MainWindow::showAbout()
                                    tr("<center><b>SmartOS v%1</b></center><br>"
                                       "Operating Systems Concepts Simulator<br>"
                                       "Available under <b>GPLv3 Licence</b><br>"
-                                      "<center>Nicholas Bailey</center>").arg(SmartOS::getVersionNumber().toString()),
+                                      "<center>Nicholas Bailey</center>").arg(QString::fromStdString(SmartOS::getVersionNumber())),
                 QMessageBox::Ok
                 );
+
     aboutBox.setWindowIcon(QIcon(":/resources/about.png"));
     aboutBox.exec();
 }
