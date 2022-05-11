@@ -8,7 +8,7 @@ class CentralProcessingUnit
 public:
     CentralProcessingUnit();
 
-    void setActiveProcess(ProcessControlBlockPtr pcb);
+    ProcessControlBlockPtr setActiveProcess(ProcessControlBlockPtr pcb);
     ProcessControlBlockPtr& currentProcess();
 
 private:

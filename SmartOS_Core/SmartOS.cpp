@@ -13,6 +13,52 @@ void SmartOS::createProcessControlBlock(unsigned int pid, unsigned int memory)
     m_readyQueue.push_back(std::move(pcb));
 }
 
+bool SmartOS::deleteProcessControlBlock(unsigned int pid)
+{
+    if(m_cpu.currentProcess()->pid() == pid) {
+        m_cpu.setActiveProcess(nullptr);
+        return true;
+    }
+
+    auto idx = std::find_if(std::begin(m_readyQueue), std::end(m_readyQueue), [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid;});
+    if(idx != m_readyQueue.end()) {
+        m_readyQueue.erase(idx);
+        return true;
+    }
+
+    idx = std::find_if(std::begin(m_blockedQueue), std::end(m_blockedQueue), [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid;});
+    if(idx != m_blockedQueue.end()) {
+        m_blockedQueue.erase(idx);
+        return true;
+    }
+
+    return false;
+}
+
+bool SmartOS::setActiveProcess(unsigned int pid)
+{
+    // We can only move a process to the CPU if it was currently in the
+    // ready queue.
+
+    auto idx = std::find_if(std::begin(m_readyQueue), std::end(m_readyQueue), [pid](ProcessControlBlockPtr& pcb) { return pcb->pid() == pid;});
+
+    if(idx != m_readyQueue.end()) {
+        // Grab the pointer from the list.
+        auto pcb = std::move(*idx);
+
+        // Remove the now invalidated unique_ptr.
+        m_readyQueue.erase(idx);
+
+        // Set the new active process.
+        auto oldActive = std::move(m_cpu.setActiveProcess(std::move(pcb)));
+        m_readyQueue.push_back(std::move(oldActive));
+
+        return true;
+    }
+
+    return false;
+}
+
 CentralProcessingUnit& SmartOS::cpu()
 {
     return m_cpu;

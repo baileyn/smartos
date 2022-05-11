@@ -7,10 +7,10 @@
 #include "IOEvent.h"
 #include "ProcessControlBlock.h"
 
-#include <vector>
+#include <list>
 
-typedef std::vector<ProcessControlBlockPtr> PCBQueue;
-typedef std::vector<IOEventPtr> IOEventQueue;
+typedef std::list<ProcessControlBlockPtr> PCBQueue;
+typedef std::list<IOEventPtr> IOEventQueue;
 
 class SMARTOS_CORESHARED_EXPORT SmartOS
 {
@@ -21,6 +21,10 @@ public:
 
     SmartOS(unsigned long memory);
     void createProcessControlBlock(unsigned int pid, unsigned int memory);
+    bool deleteProcessControlBlock(unsigned int pid);
+
+    bool setActiveProcess(unsigned int pid);
+
     CentralProcessingUnit& cpu();
 
     const PCBQueue& readyQueue();
