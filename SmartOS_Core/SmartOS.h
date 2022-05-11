@@ -5,12 +5,14 @@
 
 #include <QVersionNumber>
 
-static const QVersionNumber VERSION{0, 0, 1};
-
 class SMARTOS_CORESHARED_EXPORT SmartOS
 {
 public:
+    static inline QVersionNumber getVersionNumber() {
+        return QVersionNumber(0, 0, 1);
+    }
 
+public:
     SmartOS();
 };
 

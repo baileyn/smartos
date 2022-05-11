@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = smartos
+TARGET = SmartOS_GUI
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -40,8 +40,6 @@ HEADERS += \
 
 RESOURCES += \
     smartos.qrc
-
-LIBS += SmartOS_Core
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../SmartOS_Core/release/ -lSmartOS_Core
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../SmartOS_Core/debug/ -lSmartOS_Core

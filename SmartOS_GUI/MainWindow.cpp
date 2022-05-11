@@ -16,7 +16,7 @@
 #include <SmartOS.h>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), stackedWidget(new QStackedWidget), processSchedulerWidget(nullptr), welcomeWidget(nullptr)
+    QMainWindow(parent), stackedWidget(new QStackedWidget), welcomeWidget(nullptr), processSchedulerWidget(nullptr)
 {
     setWindowIcon(QIcon(":/resources/smartos.png"));
     setWindowTitle(tr("SmartOS Simulator"));
@@ -61,7 +61,7 @@ void MainWindow::exit()
 
 void MainWindow::showAbout()
 {
-    historyList.push_back(tr("Show About"));
+    historyList.push_front(tr("Show About"));
 
     QMessageBox aboutBox(
                 QMessageBox::NoIcon,
@@ -69,7 +69,7 @@ void MainWindow::showAbout()
                                    tr("<center><b>SmartOS v%1</b></center><br>"
                                       "Operating Systems Concepts Simulator<br>"
                                       "Available under <b>GPLv3 Licence</b><br>"
-                                      "<center>Nicholas Bailey</center>").arg(VERSION.toString()),
+                                      "<center>Nicholas Bailey</center>").arg(SmartOS::getVersionNumber().toString()),
                 QMessageBox::Ok
                 );
     aboutBox.setWindowIcon(QIcon(":/resources/about.png"));
@@ -87,6 +87,9 @@ void MainWindow::showWelcome()
     if(welcomeWidget == nullptr) {
         welcomeWidget = new WelcomeWidget(this);
         stackedWidget->addWidget(welcomeWidget);
+    } else {
+        // The first time showing the Welcome view isn't technically a user command.
+        historyList.push_front("Show Welcome View");
     }
 
     stackedWidget->setCurrentWidget(welcomeWidget);
@@ -94,6 +97,8 @@ void MainWindow::showWelcome()
 
 void MainWindow::showProcessScheduler()
 {
+    historyList.push_front("Show CPU Simulator");
+
     if(processSchedulerWidget == nullptr) {
         processSchedulerWidget = new ProcessSchedulerWidget;
         stackedWidget->addWidget(processSchedulerWidget);
