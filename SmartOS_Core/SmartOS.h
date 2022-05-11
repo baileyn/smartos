@@ -17,7 +17,7 @@ class SMARTOS_CORESHARED_EXPORT SmartOS
 public:
     static inline std::string getVersionNumber()
     {
-        return "0.0.1";
+        return "0.0.4";
     }
 
     SmartOS(size_t memory);
@@ -40,7 +40,17 @@ public:
 
     const IOEventQueue& ioEventQueue();
 
-    size_t memory() const;
+    /**
+     * @brief maxMemory returns the maximum amount of memory in the operating system.
+     * @return the maximum amount of memory in the operating system
+     */
+    size_t maxMemory() const;
+
+    /**
+     * @brief memory returns the amount of memory used in the operating system.
+     * @return the amount of memory used in the operating system
+     */
+    size_t usedMemory();
 
 private:
     CentralProcessingUnit m_cpu;
@@ -49,6 +59,7 @@ private:
     IOEventQueue m_ioEventQueue;
     ProcessControlBlockPtr m_nullProcessControlBlock;
 
+    size_t m_maxMemory;
     size_t m_memory;
     size_t m_lastPid;
 };

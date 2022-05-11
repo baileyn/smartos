@@ -16,15 +16,24 @@
 #include <QVBoxLayout>
 
 #include <memory>
+#include <random>
 
 #include <SmartOS.h>
 
 #include <QDebug>
 
+// Anonymous namespace so we don't clutter anything.
+namespace
+{
+std::random_device r;
+std::mt19937 engine(r());
+}
+
 extern std::unique_ptr<SmartOS> g_SmartOS;
 
 ProcessSchedulerWidget::ProcessSchedulerWidget(MainWindow* parent)
-    : QWidget(parent), m_mainWindow{parent}
+    : QWidget(parent)
+    , m_mainWindow{parent}
 {
     QToolBar* toolbar = new QToolBar;
 
@@ -73,7 +82,9 @@ void ProcessSchedulerWidget::addProcessControlBlock()
     ProcessCreationDialog processCreationDialog;
 
     if (processCreationDialog.exec() == QDialog::Accepted) {
-        m_mainWindow->addHistory(QString("Add new Process Control Block with PID %1").arg(processCreationDialog.pid()));
+        m_mainWindow->addHistory(
+            QString("Add new Process Control Block with PID %1")
+                .arg(processCreationDialog.pid()));
         g_SmartOS->createProcessControlBlock(
             processCreationDialog.pid(), processCreationDialog.memoryRequired());
     }
@@ -82,7 +93,8 @@ void ProcessSchedulerWidget::addProcessControlBlock()
 void ProcessSchedulerWidget::addRandomProcessControlBlocks()
 {
     QInputDialog inputDialog;
-    inputDialog.setLabelText("How many random Process Control Blocks would you like to generate?");
+    inputDialog.setLabelText(
+        "How many random Process Control Blocks would you like to generate?");
     inputDialog.setOkButtonText("Create All");
 
     if (inputDialog.exec() == QInputDialog::Accepted) {
@@ -92,10 +104,16 @@ void ProcessSchedulerWidget::addRandomProcessControlBlocks()
         int num = text.toInt(&parsed);
 
         if (parsed) {
-            m_mainWindow->addHistory(QString("Add %1 random process control blocks.").arg(num));
+            m_mainWindow->addHistory(
+                QString("Add %1 random process control blocks.").arg(num));
+
+            size_t maximumMemoryAvailable = g_SmartOS->maxMemory() - g_SmartOS->usedMemory();
+
+            std::uniform_int_distribution<size_t> uniform{1, maximumMemoryAvailable};
 
             for (int i = 0; i < num; i++) {
-                g_SmartOS->createProcessControlBlock(0, 1);
+                size_t pid = g_SmartOS->nextSequentialPID();
+                g_SmartOS->createProcessControlBlock(pid, uniform(engine));
             }
         }
     }

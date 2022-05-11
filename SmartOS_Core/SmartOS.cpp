@@ -1,7 +1,7 @@
 #include "SmartOS.h"
 
 SmartOS::SmartOS(size_t memory)
-    : m_memory{memory}, m_lastPid{0}
+    : m_memory{memory}, m_lastPid{1}
 {}
 
 size_t SmartOS::nextSequentialPID()
@@ -170,7 +170,30 @@ const ProcessControlBlockPtr& SmartOS::findProcessControlBlock(size_t pid)
     return m_nullProcessControlBlock;
 }
 
-size_t SmartOS::memory() const
+size_t SmartOS::usedMemory()
 {
-    return m_memory;
+    size_t memoryUsed = 0;
+
+    for(auto& pcb : readyQueue()) {
+        if(pcb != nullptr) {
+            memoryUsed += pcb->memory();
+        }
+    }
+
+    for(auto& pcb : blockedQueue()) {
+        if(pcb != nullptr) {
+            memoryUsed += pcb->memory();
+        }
+    }
+
+    if(cpu().currentProcess() != nullptr) {
+        memoryUsed += cpu().currentProcess()->memory();
+    }
+
+    return memoryUsed;
+}
+
+size_t SmartOS::maxMemory() const
+{
+    return m_maxMemory;
 }
