@@ -280,7 +280,7 @@ void SmartOS::updateCurrentProcessControlBlock()
 
         auto i = m_readyQueue.begin();
 
-        int highestPriority = 0;
+        size_t highestPriority = 0;
         PCBQueue::iterator highest = m_readyQueue.end();
 
         while (i != m_readyQueue.end()) {
