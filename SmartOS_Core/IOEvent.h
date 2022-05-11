@@ -7,6 +7,7 @@ class IOEvent
 {
 public:
     enum class Type {
+        NONE,
         HARD_DRIVE,
         USER_IO,
     };
