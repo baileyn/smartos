@@ -1,7 +1,9 @@
 #include "MainWindow.h"
 
+#include "Globals.h"
 #include "HistoryDialog.h"
 #include "ProcessScheduler/ProcessSchedulerWidget.h"
+#include "ProcessScheduler/SchedulingDialog.h"
 #include "WelcomeWidget.h"
 
 #include <QHBoxLayout>
@@ -31,7 +33,7 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow()
 {}
 
-void MainWindow::addHistory(const QString &info)
+void MainWindow::addHistory(const QString& info)
 {
     historyList.push_front(info);
 }
@@ -110,5 +112,10 @@ void MainWindow::showProcessScheduler()
         stackedWidget->addWidget(processSchedulerWidget);
     }
 
+    SchedulingDialog scheduleDialog;
+    scheduleDialog.exec();
+
+    g_SmartOS->setScheduler(scheduleDialog.schedulerType());
+    g_SmartOS->setTimeQuantum(scheduleDialog.quantum());
     stackedWidget->setCurrentWidget(processSchedulerWidget);
 }

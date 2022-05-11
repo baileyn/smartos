@@ -7,6 +7,7 @@
 #include <ProcessControlBlock.h>
 
 #include <QPaintEvent>
+#include <QStackedWidget>
 #include <QWidget>
 
 class CpuWidget : public QWidget
@@ -18,7 +19,7 @@ public:
     void update();
 
 private:
-    ProcessWidget* m_currentProcess;
+    QStackedWidget* m_stackedWidget;
 };
 
 #endif // CPUWIDGET_H

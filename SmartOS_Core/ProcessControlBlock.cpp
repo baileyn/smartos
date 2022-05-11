@@ -34,12 +34,32 @@ size_t ProcessControlBlock::memory() const
     return m_memory;
 }
 
+IOEvent ProcessControlBlock::ioEvent() const
+{
+    return m_ioEvent;
+}
+
 void ProcessControlBlock::updateCpuUsageTerm(size_t elapsed)
 {
     m_cpuUsageTerm += elapsed;
 }
 
+void ProcessControlBlock::updateIoReqTerm(size_t elapsed)
+{
+    m_ioReqTerm += elapsed;
+}
+
 void ProcessControlBlock::updateWaitTerm(size_t elapsed)
 {
     m_waitTerm += elapsed;
+}
+
+void ProcessControlBlock::setWaitEvent(IOEvent event)
+{
+    m_ioEvent = event;
+}
+
+void ProcessControlBlock::clearWaitEvent()
+{
+    m_ioEvent = IOEvent(IOEvent::Type::NONE, 0);
 }

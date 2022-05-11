@@ -10,7 +10,13 @@
 #include <list>
 
 typedef std::list<ProcessControlBlockPtr> PCBQueue;
-typedef std::list<IOEventPtr> IOEventQueue;
+typedef std::list<IOEvent> IOEventQueue;
+
+enum class SchedulerType {
+    DEFAULT,
+    ROUND_ROBIN,
+    MLFQ,
+};
 
 class SMARTOS_CORESHARED_EXPORT SmartOS
 {
@@ -29,7 +35,12 @@ public:
     bool blockProcessControlBlock(size_t pid, IOEvent ioEvent);
     bool unblockProcessControlBlock(size_t pid);
 
+    void addEvent(IOEvent::Type type);
+
     bool setActiveProcess(size_t pid);
+
+    void moveActiveToReady();
+    void moveActiveToBlocked(IOEvent::Type type);
 
     CentralProcessingUnit& cpu();
 
@@ -58,10 +69,41 @@ public:
     void execute();
 
     /**
+     * @brief updateCurrent sets the next active process in the CPU.
+     */
+    void updateCurrentProcessControlBlock();
+
+    /**
+     * @brief addOperatingSystemProcess adds the operating system process
+     */
+    void addOperatingSystemProcess();
+
+    void adjustProcessTimes(size_t elapsed);
+
+    /**
      * @brief determineNextProcess determines the next process in the ready queue to run.
      * @return the next process in the ready queue to run.
      */
     ProcessControlBlockPtr determineNextProcess();
+
+    size_t cycleCount() const;
+
+    /**
+     * @brief reset resets the operating system.
+     */
+    void reset();
+
+    /**
+     * @brief setScheduler sets the type of scheduler to use.
+     * @param type the scheduler type
+     */
+    void setScheduler(SchedulerType type);
+
+    /**
+     * @brief setTimeQuantum sets the time quantum
+     * @param quantum the time quantum
+     */
+    void setTimeQuantum(size_t quantum);
 
 private:
     CentralProcessingUnit m_cpu;
@@ -72,6 +114,13 @@ private:
 
     size_t m_maxMemory;
     size_t m_lastPid;
+
+    size_t m_cycles;
+
+    SchedulerType m_scheduler;
+
+    size_t m_lastSwitch;
+    size_t m_timeQuantum;
 };
 
 #endif // SMARTOS_H

@@ -1,6 +1,7 @@
 #ifndef PROCESSSCHEDULERWIDGET_H
 #define PROCESSSCHEDULERWIDGET_H
 
+#include "BlockedQueueWidget.h"
 #include "CpuWidget.h"
 #include "ReadyQueueWidget.h"
 
@@ -33,8 +34,12 @@ public slots:
     void executeStep();
 
 private:
+    void update();
+
+private:
     MainWindow* m_mainWindow;
     ReadyQueueWidget* m_readyQueueWidget;
+    BlockedQueueWidget* m_blockedQueueWidget;
     CpuWidget* m_cpuWidget;
 
     int m_currentStep;

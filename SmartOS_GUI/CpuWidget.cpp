@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QVBoxLayout>
 
+#include <QDebug>
+
 CpuWidget::CpuWidget(QWidget* parent)
     : QWidget(parent)
 {
@@ -14,16 +16,18 @@ CpuWidget::CpuWidget(QWidget* parent)
     vbox->addWidget(label);
     vbox->setAlignment(label, Qt::AlignCenter);
 
+    m_stackedWidget = new QStackedWidget;
+    vbox->addWidget(m_stackedWidget);
     setLayout(vbox);
 }
 
 void CpuWidget::update()
 {
-    if (m_currentProcess != nullptr) {
-        layout()->removeWidget(m_currentProcess);
-        delete m_currentProcess;
-    }
+    auto& pcb = g_SmartOS->cpu().currentProcess();
 
-    m_currentProcess = new ProcessWidget(g_SmartOS->cpu().currentProcess());
-    layout()->addWidget(m_currentProcess);
+    if (pcb != nullptr) {
+        auto widget = new ProcessWidget(pcb, true);
+        m_stackedWidget->addWidget(widget);
+        m_stackedWidget->setCurrentWidget(widget);
+    }
 }

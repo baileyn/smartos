@@ -2,6 +2,8 @@
 
 #include <random>
 
+#include <iostream>
+
 namespace
 {
 std::random_device r;
@@ -11,9 +13,10 @@ std::mt19937 engine(r());
 SmartOS::SmartOS(size_t memory)
     : m_maxMemory{memory}
     , m_lastPid{1}
+    , m_scheduler{SchedulerType::DEFAULT}
+    , m_lastSwitch{0}
 {
-    // Add OS process.
-    createProcessControlBlock(0, 100);
+    addOperatingSystemProcess();
 }
 
 size_t SmartOS::nextSequentialPID()
@@ -114,6 +117,11 @@ bool SmartOS::unblockProcessControlBlock(size_t pid)
     return false;
 }
 
+void SmartOS::addEvent(IOEvent::Type type)
+{
+    m_ioEventQueue.push_back(IOEvent(type, m_cycles));
+}
+
 bool SmartOS::setActiveProcess(size_t pid)
 {
     // We can only move a process to the CPU if it was currently in the
@@ -141,6 +149,17 @@ bool SmartOS::setActiveProcess(size_t pid)
     }
 
     return false;
+}
+
+void SmartOS::moveActiveToReady()
+{
+    m_readyQueue.push_back(m_cpu.setActiveProcess(nullptr));
+}
+
+void SmartOS::moveActiveToBlocked(IOEvent::Type type)
+{
+    m_cpu.currentProcess()->setWaitEvent(IOEvent(type, m_cycles));
+    m_blockedQueue.push_back(m_cpu.setActiveProcess(nullptr));
 }
 
 CentralProcessingUnit& SmartOS::cpu()
@@ -185,6 +204,11 @@ const ProcessControlBlockPtr& SmartOS::findProcessControlBlock(size_t pid)
     return m_nullProcessControlBlock;
 }
 
+const IOEventQueue& SmartOS::ioEventQueue()
+{
+    return m_ioEventQueue;
+}
+
 size_t SmartOS::usedMemory()
 {
     size_t memoryUsed = 0;
@@ -208,6 +232,76 @@ size_t SmartOS::usedMemory()
     return memoryUsed;
 }
 
+void SmartOS::updateCurrentProcessControlBlock()
+{
+    ProcessControlBlockPtr current = nullptr;
+
+    switch (m_scheduler) {
+    case SchedulerType::DEFAULT: {
+        if (m_readyQueue.empty()) {
+            // Keep the current process in the cpu.
+            return;
+        }
+
+        current = std::move(m_readyQueue.front());
+        m_readyQueue.erase(m_readyQueue.begin());
+        break;
+    }
+
+    case SchedulerType::ROUND_ROBIN: {
+        if (m_cycles - m_lastSwitch < m_timeQuantum && m_cpu.currentProcess() != nullptr) {
+            return;
+        }
+
+        if (m_readyQueue.empty()) {
+            return;
+        }
+
+        auto ptr = std::move(m_readyQueue.front());
+        m_readyQueue.erase(m_readyQueue.begin());
+
+        current = std::move(ptr);
+
+        m_lastSwitch = m_cycles;
+        break;
+    }
+    default:
+        std::cout << "Can't handle scheduler." << std::endl;
+    }
+
+    if (current != nullptr) {
+        ProcessControlBlockPtr oldActive = m_cpu.setActiveProcess(std::move(current));
+
+        // 10 second penalty
+        adjustProcessTimes(10);
+
+        // Move the old process into the ready queue if it exists.
+        if (oldActive != nullptr) {
+            m_readyQueue.push_back(std::move(oldActive));
+        }
+    }
+}
+
+void SmartOS::addOperatingSystemProcess()
+{
+    // Add OS process.
+    createProcessControlBlock(0, 0);
+    setActiveProcess(0);
+}
+
+void SmartOS::adjustProcessTimes(size_t elapsed)
+{
+    m_cpu.currentProcess()->updateCpuUsageTerm(elapsed);
+
+    for (auto& pcb : m_readyQueue) {
+        pcb->updateWaitTerm(elapsed);
+    }
+
+    for (auto& pcb : m_blockedQueue) {
+        pcb->updateIoReqTerm(elapsed);
+    }
+}
+
 void SmartOS::execute()
 {
     // Determine if we have anything to actually do.
@@ -216,31 +310,98 @@ void SmartOS::execute()
         return;
     }
 
-    std::uniform_int_distribution<size_t> processTimeGen(0, 10000);
+    m_cycles++;
 
-    ProcessControlBlockPtr current = determineNextProcess();
-    ProcessControlBlockPtr oldActive = m_cpu.setActiveProcess(std::move(current));
+    std::uniform_int_distribution<size_t> processingGen(0, 10000);
+    adjustProcessTimes(processingGen(engine));
 
-    // Move the old process into the ready queue.
-    if (oldActive != nullptr) {
-        m_readyQueue.push_back(std::move(oldActive));
+    // Every 2 time cycles, generate a random number between 0 and 10.
+    if (m_cycles % 2 == 0) {
+        std::uniform_int_distribution<size_t> eventGenerator(0, 10);
+
+        size_t operation = eventGenerator(engine);
+
+        if (operation == 4) {
+            std::cout << "User IO Event" << std::endl;
+            addEvent(IOEvent::Type::USER_IO);
+        } else if (operation == 9) {
+            std::cout << "Hard Drive event" << std::endl;
+            addEvent(IOEvent::Type::HARD_DRIVE);
+        }
     }
 
-    size_t processingTime = processTimeGen(engine);
+    if (m_cpu.currentProcess()->pid() != 0) {
+        std::uniform_int_distribution<size_t> resultGen(0, 3);
 
-    m_cpu.currentProcess()->updateCpuUsageTerm(processingTime);
+        size_t operation = resultGen(engine);
 
-    for (auto& pcb : m_readyQueue) {
-        pcb->updateWaitTerm(processingTime);
+        switch (operation) {
+        case 0:
+            std::cout << "TERMINATE" << std::endl;
+            // Terminate process.
+            m_cpu.setActiveProcess(nullptr);
+            break;
+        case 1:
+            // Ready queue
+            moveActiveToReady();
+            break;
+        case 2:
+            // Block for User IO
+            moveActiveToBlocked(IOEvent::Type::USER_IO);
+            std::cout << "Move to blocked awiting for user IO" << std::endl;
+            break;
+        case 3:
+            // Block for Hard drive
+            std::cout << "Move to blocked waiting for hard drive." << std::endl;
+            moveActiveToBlocked(IOEvent::Type::HARD_DRIVE);
+            break;
+        default:
+            // TODO: Report error.
+            std::cout << "ERROR ERROR ERROR: " << operation << std::endl;
+            break;
+        }
+    }
+
+    for (auto& event : ioEventQueue()) {
+        auto i = m_blockedQueue.begin();
+        while (i != m_blockedQueue.end()) {
+            if ((*i)->ioEvent().type() == event.type()) {
+                if ((*i)->ioEvent().cycleStamp() < event.cycleStamp()) {
+                    (*i)->clearWaitEvent();
+                    m_readyQueue.push_back(std::move(*i));
+                    m_blockedQueue.erase(i);
+                    break;
+                }
+            }
+
+            i++;
+        }
     }
 }
 
-ProcessControlBlockPtr SmartOS::determineNextProcess()
+size_t SmartOS::cycleCount() const
 {
-    auto ptr = std::move(m_readyQueue.front());
-    m_readyQueue.erase(m_readyQueue.begin());
+    return m_cycles;
+}
 
-    return std::move(ptr);
+void SmartOS::reset()
+{
+    m_cycles = 0;
+    m_readyQueue.clear();
+    m_blockedQueue.clear();
+    m_cpu.setActiveProcess(nullptr);
+
+    addOperatingSystemProcess();
+}
+
+void SmartOS::setScheduler(SchedulerType type)
+{
+    m_scheduler = type;
+}
+
+void SmartOS::setTimeQuantum(size_t quantum)
+{
+    m_timeQuantum = quantum;
 }
 
 size_t SmartOS::maxMemory() const

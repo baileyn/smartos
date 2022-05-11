@@ -94,6 +94,9 @@ ProcessSchedulerWidget::ProcessSchedulerWidget(MainWindow* parent)
 
     QHBoxLayout* hbox = new QHBoxLayout;
 
+    m_blockedQueueWidget = new BlockedQueueWidget;
+    hbox->addWidget(m_blockedQueueWidget);
+
     m_cpuWidget = new CpuWidget;
     hbox->addWidget(m_cpuWidget);
     vbox->addLayout(hbox);
@@ -119,7 +122,7 @@ void ProcessSchedulerWidget::addProcessControlBlock()
                 .arg(processCreationDialog.pid()));
         g_SmartOS->createProcessControlBlock(
             processCreationDialog.pid(), processCreationDialog.memoryRequired());
-        m_readyQueueWidget->update();
+        update();
     }
 }
 
@@ -151,7 +154,7 @@ void ProcessSchedulerWidget::addRandomProcessControlBlocks()
                 g_SmartOS->createProcessControlBlock(pid, uniform(engine));
             }
 
-            m_readyQueueWidget->update();
+            update();
         }
     }
 }
@@ -192,13 +195,22 @@ void ProcessSchedulerWidget::stop()
 
     m_executeTimer->stop();
 
-    m_currentStep = 0;
-    m_timerDisplay->setText(QString("Step: %1").arg(m_currentStep));
+    g_SmartOS->reset();
+    update();
 }
 
 void ProcessSchedulerWidget::executeStep()
 {
-    m_timerDisplay->setText(QString("Step: %1").arg(m_currentStep));
+    m_timerDisplay->setText(QString("Step: %1").arg(g_SmartOS->cycleCount()));
 
-    m_currentStep++;
+    g_SmartOS->updateCurrentProcessControlBlock();
+    update();
+    g_SmartOS->execute();
+}
+
+void ProcessSchedulerWidget::update()
+{
+    m_readyQueueWidget->update();
+    m_blockedQueueWidget->update();
+    m_cpuWidget->update();
 }

@@ -13,15 +13,13 @@ public:
     };
 
 public:
-    IOEvent(Type type, unsigned long cycleStamp);
+    IOEvent(Type type, size_t cycleStamp);
     Type type() const;
-    unsigned long cycleStamp() const;
+    size_t cycleStamp() const;
 
 private:
     Type m_type;
-    unsigned long m_cycleStamp;
+    size_t m_cycleStamp;
 };
-
-typedef std::unique_ptr<IOEvent> IOEventPtr;
 
 #endif // IOEVENT_H

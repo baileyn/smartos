@@ -33,7 +33,9 @@ SOURCES += \
     ProcessScheduler/ProcessCreationDialog.cpp \
     ReadyQueueWidget.cpp \
     ProcessWidget.cpp \
-    CpuWidget.cpp
+    CpuWidget.cpp \
+    BlockedQueueWidget.cpp \
+    ProcessScheduler/SchedulingDialog.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -45,7 +47,9 @@ HEADERS += \
     Globals.h \
     ReadyQueueWidget.h \
     ProcessWidget.h \
-    CpuWidget.h
+    CpuWidget.h \
+    BlockedQueueWidget.h \
+    ProcessScheduler/SchedulingDialog.h
 
 RESOURCES += \
     smartos.qrc

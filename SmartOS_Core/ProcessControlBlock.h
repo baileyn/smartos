@@ -19,7 +19,11 @@ public:
     IOEvent ioEvent() const;
 
     void updateCpuUsageTerm(size_t elapsed);
+    void updateIoReqTerm(size_t elapsed);
     void updateWaitTerm(size_t elapsed);
+
+    void setWaitEvent(IOEvent event);
+    void clearWaitEvent();
 
 private:
     size_t m_pid;
