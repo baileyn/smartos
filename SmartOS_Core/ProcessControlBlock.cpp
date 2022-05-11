@@ -7,6 +7,7 @@ ProcessControlBlock::ProcessControlBlock(size_t pid, size_t memory)
     , m_waitTerm{0}
     , m_memory{memory}
     , m_ioEvent{IOEvent::Type::NONE, 0}
+    , m_type{ProcessType::MIXED}
 {}
 
 size_t ProcessControlBlock::pid() const
@@ -39,6 +40,11 @@ IOEvent ProcessControlBlock::ioEvent() const
     return m_ioEvent;
 }
 
+ProcessType ProcessControlBlock::processType() const
+{
+    return m_type;
+}
+
 void ProcessControlBlock::updateCpuUsageTerm(size_t elapsed)
 {
     m_cpuUsageTerm += elapsed;
@@ -62,4 +68,9 @@ void ProcessControlBlock::setWaitEvent(IOEvent event)
 void ProcessControlBlock::clearWaitEvent()
 {
     m_ioEvent = IOEvent(IOEvent::Type::NONE, 0);
+}
+
+void ProcessControlBlock::setProcessType(ProcessType type)
+{
+    m_type = type;
 }

@@ -16,6 +16,7 @@ ProcessWidget::ProcessWidget(ProcessControlBlockPtr& pcb, bool detailed, QWidget
     , m_ioReq{nullptr}
     , m_waitTerm{nullptr}
     , m_blockEvent{nullptr}
+    , m_processType{nullptr}
 {
     QGridLayout* gridLayout = new QGridLayout;
 
@@ -43,22 +44,24 @@ ProcessWidget::ProcessWidget(ProcessControlBlockPtr& pcb, bool detailed, QWidget
         gridLayout->addWidget(m_waitTerm, 4, 1);
     }
 
-    m_blockEvent = new QLabel;
+    m_processType = new QLabel;
 
-    switch (m_pcb->ioEvent().type()) {
-    case IOEvent::Type::HARD_DRIVE:
-        m_blockEvent->setText(QString("HARD_DRIVE"));
+    switch (m_pcb->processType()) {
+    case ProcessType::CPU_BOUND:
+        m_processType->setText("CPU BOUND");
         break;
-    case IOEvent::Type::USER_IO:
-        m_blockEvent->setText(QString("USER_IO"));
+    case ProcessType::INTERACTIVE:
+        m_processType->setText("INTERACTIVE");
+        break;
+    case ProcessType::MIXED:
+        m_processType->setText("MIXED");
         break;
     default:
-        m_blockEvent->setText("NONE");
-        break;
+        m_processType->setText("WRONG");
     }
 
-    gridLayout->addWidget(new QLabel("Block"), detailed ? 5 : 2, 0);
-    gridLayout->addWidget(m_blockEvent, detailed ? 5 : 2, 1);
+    gridLayout->addWidget(new QLabel("Type"), detailed ? 5 : 2, 0);
+    gridLayout->addWidget(m_processType, detailed ? 5 : 2, 1);
 
     setLayout(gridLayout);
 }

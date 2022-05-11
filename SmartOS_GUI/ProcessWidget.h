@@ -28,6 +28,7 @@ private:
     QLabel* m_ioReq;
     QLabel* m_waitTerm;
     QLabel* m_blockEvent;
+    QLabel* m_processType;
 };
 
 #endif // PROCESSWIDGET_H

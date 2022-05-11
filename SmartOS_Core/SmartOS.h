@@ -30,7 +30,7 @@ public:
 
     size_t nextSequentialPID();
 
-    void createProcessControlBlock(size_t pid, size_t memory);
+    void createProcessControlBlock(size_t pid, size_t memory, ProcessType type = ProcessType::RANDOM);
     bool deleteProcessControlBlock(size_t pid);
     bool blockProcessControlBlock(size_t pid, IOEvent ioEvent);
     bool unblockProcessControlBlock(size_t pid);

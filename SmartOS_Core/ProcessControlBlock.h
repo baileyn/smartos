@@ -5,6 +5,11 @@
 
 #include <memory>
 
+/**
+ * @brief The ProcessType enum represents the type of process
+ */
+enum class ProcessType { RANDOM, INTERACTIVE, CPU_BOUND, MIXED, LAST };
+
 class ProcessControlBlock
 {
 public:
@@ -17,6 +22,7 @@ public:
     size_t memory() const;
 
     IOEvent ioEvent() const;
+    ProcessType processType() const;
 
     void updateCpuUsageTerm(size_t elapsed);
     void updateIoReqTerm(size_t elapsed);
@@ -24,6 +30,7 @@ public:
 
     void setWaitEvent(IOEvent event);
     void clearWaitEvent();
+    void setProcessType(ProcessType type);
 
 private:
     size_t m_pid;
@@ -33,6 +40,7 @@ private:
     size_t m_memory;
 
     IOEvent m_ioEvent;
+    ProcessType m_type;
 };
 
 typedef std::unique_ptr<ProcessControlBlock> ProcessControlBlockPtr;

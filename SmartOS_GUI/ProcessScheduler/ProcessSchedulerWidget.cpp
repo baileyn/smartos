@@ -120,8 +120,9 @@ void ProcessSchedulerWidget::addProcessControlBlock()
         m_mainWindow->addHistory(
             QString("Add new Process Control Block with PID %1")
                 .arg(processCreationDialog.pid()));
-        g_SmartOS->createProcessControlBlock(
-            processCreationDialog.pid(), processCreationDialog.memoryRequired());
+        g_SmartOS->createProcessControlBlock(processCreationDialog.pid(),
+                                             processCreationDialog.memoryRequired(),
+                                             processCreationDialog.processType());
         update();
     }
 }

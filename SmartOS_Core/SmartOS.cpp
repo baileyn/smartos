@@ -30,10 +30,18 @@ size_t SmartOS::nextSequentialPID()
     return -1;
 }
 
-void SmartOS::createProcessControlBlock(size_t pid, size_t memory)
+void SmartOS::createProcessControlBlock(size_t pid, size_t memory, ProcessType type)
 {
     // TODO: Check for already existing pid.
     auto pcb = std::make_unique<ProcessControlBlock>(pid, memory);
+
+    while (type == ProcessType::RANDOM) {
+        std::uniform_int_distribution<int> gen{0, static_cast<int>(ProcessType::LAST) - 1};
+
+        type = static_cast<ProcessType>(gen(engine));
+    }
+
+    pcb->setProcessType(type);
     m_readyQueue.push_back(std::move(pcb));
 }
 
@@ -331,9 +339,26 @@ void SmartOS::execute()
     }
 
     if (m_cpu.currentProcess()->pid() != 0) {
-        std::uniform_int_distribution<size_t> resultGen(0, 3);
+        std::vector<int> options = {0, 1, 2, 3};
 
-        size_t operation = resultGen(engine);
+        if (m_cpu.currentProcess()->processType() == ProcessType::INTERACTIVE) {
+            // 3 times more likely
+            for (int i = 0; i < 3; i++) {
+                options.push_back(2);
+            }
+        } else if (m_cpu.currentProcess()->processType() == ProcessType::CPU_BOUND) {
+            for (int i = 0; i < 3; i++) {
+                // If we make the other options 3 times as likely, then waiting
+                // for the hard drive will be 3 times less likely.
+                options.push_back(0);
+                options.push_back(1);
+                options.push_back(3);
+            }
+        }
+
+        std::uniform_int_distribution<size_t> resultGen(0, options.size() - 1);
+
+        size_t operation = options.at(resultGen(engine));
 
         switch (operation) {
         case 0:

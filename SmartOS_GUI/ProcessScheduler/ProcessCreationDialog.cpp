@@ -23,6 +23,11 @@ size_t ProcessCreationDialog::memoryRequired() const
     return m_memoryRequired;
 }
 
+ProcessType ProcessCreationDialog::processType() const
+{
+    return static_cast<ProcessType>(m_type->currentIndex());
+}
+
 void ProcessCreationDialog::setupUi()
 {
     QGridLayout* layout = new QGridLayout();
@@ -36,12 +41,22 @@ void ProcessCreationDialog::setupUi()
     layout->addWidget(new QLabel("Memory Required"), 1, 0);
     layout->addWidget(m_memoryRequiredLine, 1, 1);
 
+    m_type = new QComboBox;
+    m_type->addItem("Random");
+    m_type->addItem("Interactive");
+    m_type->addItem("Cpu Bound");
+    m_type->addItem("Mixed");
+    m_type->setCurrentIndex(0);
+
+    layout->addWidget(new QLabel("Process Type"), 2, 0);
+    layout->addWidget(m_type, 2, 1);
+
     QPushButton* cancelButton = new QPushButton("Cancel");
-    layout->addWidget(cancelButton, 2, 0);
+    layout->addWidget(cancelButton, 3, 0);
     connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
 
     QPushButton* createButton = new QPushButton("Create");
-    layout->addWidget(createButton, 2, 1);
+    layout->addWidget(createButton, 3, 1);
     connect(createButton, &QPushButton::clicked, this, &QDialog::accept);
 }
 
