@@ -22,7 +22,7 @@ public:
     SmartOS(unsigned long memory);
     void createProcessControlBlock(unsigned int pid, unsigned int memory);
     bool deleteProcessControlBlock(unsigned int pid);
-    bool blockProcessControlBlock(unsigned int pid);
+    bool blockProcessControlBlock(unsigned int pid, IOEvent ioEvent);
 
     bool setActiveProcess(unsigned int pid);
 
