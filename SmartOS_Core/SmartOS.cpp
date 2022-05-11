@@ -1,7 +1,7 @@
 #include "SmartOS.h"
 
 SmartOS::SmartOS(unsigned long memory)
-    : m_memory{memory}
+    : m_memory{memory}, m_lastPid{0}
 {}
 
 int SmartOS::nextSequentialPID()
