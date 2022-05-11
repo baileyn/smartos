@@ -1,6 +1,8 @@
 #ifndef PROCESSSCHEDULERWIDGET_H
 #define PROCESSSCHEDULERWIDGET_H
 
+#include "ReadyQueueWidget.h"
+
 #include <QPaintEvent>
 #include <QWidget>
 
@@ -22,6 +24,7 @@ public slots:
 
 private:
     MainWindow* m_mainWindow;
+    ReadyQueueWidget* m_readyQueueWidget;
 };
 
 #endif // PROCESSSCHEDULERWIDGET_H

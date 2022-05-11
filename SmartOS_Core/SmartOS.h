@@ -33,8 +33,8 @@ public:
 
     CentralProcessingUnit& cpu();
 
-    const PCBQueue& readyQueue();
-    const PCBQueue& blockedQueue();
+    PCBQueue& readyQueue();
+    PCBQueue& blockedQueue();
 
     const ProcessControlBlockPtr& findProcessControlBlock(size_t pid);
 
@@ -60,7 +60,6 @@ private:
     ProcessControlBlockPtr m_nullProcessControlBlock;
 
     size_t m_maxMemory;
-    size_t m_memory;
     size_t m_lastPid;
 };
 

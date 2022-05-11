@@ -1,6 +1,5 @@
 #include "ProcessSchedulerWidget.h"
 
-#include "PCBDelegate.h"
 #include "ProcessCreationDialog.h"
 
 #include "MainWindow.h"
@@ -27,7 +26,7 @@ namespace
 {
 std::random_device r;
 std::mt19937 engine(r());
-}
+} // namespace
 
 extern std::unique_ptr<SmartOS> g_SmartOS;
 
@@ -67,7 +66,9 @@ ProcessSchedulerWidget::ProcessSchedulerWidget(MainWindow* parent)
 
     QVBoxLayout* vbox = new QVBoxLayout;
     vbox->setMenuBar(toolbar);
-    vbox->addWidget(new QPushButton("Plz Push"));
+
+    m_readyQueueWidget = new ReadyQueueWidget;
+    vbox->addWidget(m_readyQueueWidget);
 
     setLayout(vbox);
 }
@@ -87,6 +88,7 @@ void ProcessSchedulerWidget::addProcessControlBlock()
                 .arg(processCreationDialog.pid()));
         g_SmartOS->createProcessControlBlock(
             processCreationDialog.pid(), processCreationDialog.memoryRequired());
+        m_readyQueueWidget->update();
     }
 }
 
@@ -107,7 +109,9 @@ void ProcessSchedulerWidget::addRandomProcessControlBlocks()
             m_mainWindow->addHistory(
                 QString("Add %1 random process control blocks.").arg(num));
 
-            size_t maximumMemoryAvailable = g_SmartOS->maxMemory() - g_SmartOS->usedMemory();
+            size_t maximumMemoryAvailable =
+                g_SmartOS->maxMemory() - g_SmartOS->usedMemory();
+            maximumMemoryAvailable /= num;
 
             std::uniform_int_distribution<size_t> uniform{1, maximumMemoryAvailable};
 
@@ -115,6 +119,8 @@ void ProcessSchedulerWidget::addRandomProcessControlBlocks()
                 size_t pid = g_SmartOS->nextSequentialPID();
                 g_SmartOS->createProcessControlBlock(pid, uniform(engine));
             }
+
+            m_readyQueueWidget->update();
         }
     }
 }
