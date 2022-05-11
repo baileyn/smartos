@@ -2,7 +2,6 @@
 
 #include "HistoryDialog.h"
 #include "ProcessSchedulerWidget.h"
-#include "SmartOS.h"
 #include "WelcomeWidget.h"
 
 #include <QHBoxLayout>
@@ -14,7 +13,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include <QDebug>
+#include <SmartOS.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), stackedWidget(new QStackedWidget), processSchedulerWidget(nullptr), welcomeWidget(nullptr)

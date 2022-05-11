@@ -33,7 +33,6 @@ SOURCES += \
 
 HEADERS += \
         MainWindow.h \
-    SmartOS.h \
     HistoryDialog.h \
     HelpDialog.h \
     ProcessSchedulerWidget.h \
@@ -41,3 +40,12 @@ HEADERS += \
 
 RESOURCES += \
     smartos.qrc
+
+LIBS += SmartOS_Core
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../SmartOS_Core/release/ -lSmartOS_Core
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../SmartOS_Core/debug/ -lSmartOS_Core
+else:unix: LIBS += -L$$OUT_PWD/../SmartOS_Core/ -lSmartOS_Core
+
+INCLUDEPATH += $$PWD/../SmartOS_Core
+DEPENDPATH += $$PWD/../SmartOS_Core
